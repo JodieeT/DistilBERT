@@ -6,7 +6,7 @@ from transformers import (
 
 def load_imdb_data(model_name="distilbert-base-uncased", max_length=256):
     dataset = load_dataset("imdb")
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     def preprocess(example):
         return tokenizer(
             example["text"],
