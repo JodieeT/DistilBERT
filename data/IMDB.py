@@ -4,7 +4,7 @@ from transformers import (
     DataCollatorWithPadding
 )
 
-def load_sst2_data(model_name="distilbert-base-uncased", max_length=128):
+def load_imdb_data(model_name="distilbert-base-uncased", max_length=256):
     dataset = load_dataset("imdb")
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     def preprocess(example):
