@@ -8,7 +8,7 @@ from transformers import (
     Trainer
 )
 
-from SST2 import load_sst2_data
+from data.SST2 import load_sst2_data
 # 如果以后要跑 IMDb，就改成：
 # from IMDB import load_imdb_data
 
