@@ -1,0 +1,32 @@
+{
+    "model": "distilbert-base-uncased",
+    "task": "SST-2 sentiment classification",
+    "dataset": "glue/sst2",
+    "training": {
+        "num_train_epochs": 3,
+        "learning_rate": 2e-05,
+        "train_batch_size": 16,
+        "eval_batch_size": 16,
+        "weight_decay": 0.01
+    },
+    "evaluation": {
+        "metric": "accuracy",
+        "best_eval_accuracy": 0.9071,
+        "final_eval_loss": 0.2978
+    },
+    "performance": {
+        "training_time_seconds": 840.74,
+        "inference_time_100_samples_seconds": 1.3511,
+        "avg_inference_time_per_sample_seconds": 0.013511
+    },
+    "model_stats": {
+        "num_parameters": 66955010
+    },
+    "environment": {
+        "platform": "Google Colab",
+        "device": "CPU/GPU",
+        "transformers_version": "5.0.0",
+        "datasets_version": "4.0.0",
+        "python_version": "3.12.13"
+    }
+}

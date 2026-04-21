@@ -1,0 +1,5 @@
+Training time: 840.74 seconds
+Evaluation results: {'eval_loss': 0.29784566164016724, 'eval_accuracy': 0.9071100917431193, 'eval_runtime': 2.4859, 'eval_samples_per_second': 350.779, 'eval_steps_per_second': 22.125, 'epoch': 3.0}
+Total inference time on 100 samples: 1.3511 seconds
+Average inference time per sample: 0.013511 seconds
+Number of parameters: 66955010
