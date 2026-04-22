@@ -21,8 +21,8 @@ def has_negation(text):
 
 
 def main():
-    model_dir = "results/distilbert_sst2_model"
-    output_csv = "results/distilbert_predictions.csv"
+    model_dir = "/content/DistilBERT/results/distilbert_sst2_model"
+    output_csv = "/content/DistilBERT/results/distilbert_predictions.csv"
     max_length = 128
 
     os.makedirs("results", exist_ok=True)
