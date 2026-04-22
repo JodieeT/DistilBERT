@@ -30,7 +30,6 @@ def main():
     # 1. Load raw SST-2 dataset
     raw_dataset = load_dataset("glue", "sst2")
     val_texts = raw_dataset["validation"]["sentence"]
-    val_labels = raw_dataset["validation"]["label"]
 
     # 2. Load tokenizer from saved fine-tuned model directory
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
@@ -80,11 +79,19 @@ def main():
     df["correct"] = (df["true_label"] == df["distilbert_pred"]).astype(int)
     df["has_negation"] = df["text"].apply(has_negation)
 
-    # 7. Save CSV
+    # 7. Clean dtypes
+    df["true_label"] = df["true_label"].astype(int)
+    df["distilbert_pred"] = df["distilbert_pred"].astype(int)
+    df["distilbert_confidence"] = df["distilbert_confidence"].astype(float)
+    df["text_length"] = df["text_length"].astype(int)
+    df["correct"] = df["correct"].astype(int)
+    df["has_negation"] = df["has_negation"].astype(int)
+
+    # 8. Save CSV
     df.to_csv(output_csv, index=False)
     print(f"Saved predictions to {output_csv}")
 
-    # 8. Print quick summary
+    # 9. Print quick summary
     accuracy = (df["true_label"] == df["distilbert_pred"]).mean()
     print(f"Validation accuracy from saved predictions: {accuracy:.4f}")
     print(df.head())
