@@ -1,9 +1,13 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import time
+import json
 import numpy as np
 import evaluate
+import datasets
+import transformers
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from transformers import (
     AutoModelForSequenceClassification,
@@ -12,9 +16,6 @@ from transformers import (
 )
 
 from data.SST2 import load_sst2_data
-# 如果以后要跑 IMDb，就改成：
-# from IMDB import load_imdb_data
-
 
 def compute_metrics(eval_pred):
     metric = evaluate.load("accuracy")
@@ -24,21 +25,28 @@ def compute_metrics(eval_pred):
 
 
 def main():
+    model_name = "distilbert-base-uncased"
+    max_length = 128
+    output_dir = "results/distilbert_sst2_model"
+
+    # 0. Create results directory
+    os.makedirs("results", exist_ok=True)
+
     # 1. Load tokenized dataset
     dataset, tokenizer, data_collator = load_sst2_data(
-        model_name="distilbert-base-uncased",
-        max_length=128
+        model_name=model_name,
+        max_length=max_length
     )
 
     # 2. Load model
     model = AutoModelForSequenceClassification.from_pretrained(
-        "distilbert-base-uncased",
+        model_name,
         num_labels=2
     )
 
     # 3. Training arguments
     training_args = TrainingArguments(
-        output_dir="./distilbert-sst2",
+        output_dir=output_dir,
         eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=2e-5,
@@ -78,7 +86,9 @@ def main():
     print(eval_results)
 
     # 7. Simple inference latency test on validation set
-    sample_dataset = dataset["validation"].select(range(min(100, len(dataset["validation"]))))
+    sample_dataset = dataset["validation"].select(
+        range(min(100, len(dataset["validation"])))
+    )
 
     infer_start = time.time()
     trainer.predict(sample_dataset)
@@ -94,13 +104,63 @@ def main():
     num_params = model.num_parameters()
     print(f"Number of parameters: {num_params}")
 
-    # 9. Save summary to txt
-    with open("distilbert_sst2_results.txt", "w") as f:
+    # 9. Save trained model and tokenizer
+    trainer.save_model(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    print(f"Model and tokenizer saved to {output_dir}")
+
+    # 10. Save summary to txt
+    summary_path = "results/distilbert_sst2_results.txt"
+    with open(summary_path, "w") as f:
+        f.write(f"Model: {model_name}\n")
+        f.write("Dataset: glue/sst2\n")
         f.write(f"Training time: {training_time:.2f} seconds\n")
         f.write(f"Evaluation results: {eval_results}\n")
         f.write(f"Total inference time on {len(sample_dataset)} samples: {total_infer_time:.4f} seconds\n")
         f.write(f"Average inference time per sample: {avg_infer_time:.6f} seconds\n")
         f.write(f"Number of parameters: {num_params}\n")
+
+    print(f"Summary saved to {summary_path}")
+
+    # 11. Save config JSON
+    config = {
+        "model": model_name,
+        "task": "SST-2 sentiment classification",
+        "dataset": "glue/sst2",
+        "training": {
+            "num_train_epochs": 3,
+            "learning_rate": 2e-5,
+            "train_batch_size": 16,
+            "eval_batch_size": 16,
+            "weight_decay": 0.01,
+            "max_length": max_length
+        },
+        "evaluation": {
+            "metric": "accuracy",
+            "final_eval_accuracy": eval_results["eval_accuracy"],
+            "final_eval_loss": eval_results["eval_loss"]
+        },
+        "performance": {
+            "training_time_seconds": training_time,
+            "inference_time_100_samples_seconds": total_infer_time,
+            "avg_inference_time_per_sample_seconds": avg_infer_time
+        },
+        "model_stats": {
+            "num_parameters": num_params
+        },
+        "environment": {
+            "transformers_version": transformers.__version__,
+            "datasets_version": datasets.__version__,
+            "python_version": sys.version.split()[0]
+        },
+        "saved_model_path": output_dir
+    }
+
+    config_path = "results/distilbert_sst2_config.json"
+    with open(config_path, "w") as f:
+        json.dump(config, f, indent=4)
+
+    print(f"Config saved to {config_path}")
 
 
 if __name__ == "__main__":
