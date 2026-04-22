@@ -7,6 +7,7 @@ from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
+    DataCollatorWithPadding,
     Trainer
 )
 
@@ -33,6 +34,7 @@ def main():
 
     # 2. Load tokenizer from saved fine-tuned model directory
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
     def preprocess(example):
         return tokenizer(
@@ -49,7 +51,11 @@ def main():
     model = AutoModelForSequenceClassification.from_pretrained(model_dir)
 
     # 4. Create trainer for prediction
-    trainer = Trainer(model=model)
+    trainer = Trainer(
+        model=model,
+        processing_class=tokenizer,
+        data_collator=data_collator
+    )
 
     # 5. Predict on validation set
     predictions = trainer.predict(tokenized_dataset["validation"])
