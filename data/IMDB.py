@@ -14,6 +14,6 @@ def preprocess(example):
     )
 
 dataset = dataset.map(preprocess, batched=True)
-dataset = dataset.remove_columns(["text"])
+# dataset = dataset.remove_columns(["text"])
 dataset.set_format("torch")
 data_collator = DataCollatorWithPadding(tokenizer) # this is the tokenized data

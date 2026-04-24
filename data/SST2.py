@@ -7,6 +7,6 @@ def preprocess(example):
     return tokenizer(example["sentence"], truncation=True, max_length=128)
 
 dataset = dataset.map(preprocess, batched=True)
-dataset = dataset.remove_columns(["sentence", "idx"])
+dataset = dataset.remove_columns(["idx"])
 dataset.set_format("torch")
 data_collator = DataCollatorWithPadding(tokenizer) # this is the tokenized data
