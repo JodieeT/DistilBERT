@@ -1,6 +1,6 @@
 # DistilBERT vs BERT — error analysis on SST-2
 
-CS 5782 (Cornell Tech) final project. We fine-tune `bert-base-uncased`
+We fine-tune `bert-base-uncased`
 and `distilbert-base-uncased` on the SST-2 sentiment classification task
 and study **what kinds of sentences the distilled student loses on
 relative to the teacher**.
