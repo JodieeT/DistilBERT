@@ -1,5 +1,7 @@
-Training time: 840.74 seconds
-Evaluation results: {'eval_loss': 0.29784566164016724, 'eval_accuracy': 0.9071100917431193, 'eval_runtime': 2.4859, 'eval_samples_per_second': 350.779, 'eval_steps_per_second': 22.125, 'epoch': 3.0}
-Total inference time on 100 samples: 1.3511 seconds
-Average inference time per sample: 0.013511 seconds
+Model: distilbert-base-uncased
+Dataset: glue/sst2
+Training time: 274.90 seconds
+Evaluation results: {'eval_loss': 0.42943328619003296, 'eval_accuracy': 0.8990825688073395, 'eval_runtime': 1.7262, 'eval_samples_per_second': 505.17, 'eval_steps_per_second': 31.863, 'epoch': 3.0}
+Total inference time on 100 samples: 1.2560 seconds
+Average inference time per sample: 0.012560 seconds
 Number of parameters: 66955010
