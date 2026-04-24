@@ -70,7 +70,7 @@ def main():
     dataset_name = args.dataset
     model_name = args.model_name
 
-    output_dir = f"outputs/{dataset_name}_bert_base"
+    output_dir = f"results/{dataset_name}_bert_base"
     os.makedirs(output_dir, exist_ok=True)
 
     train_dataset, eval_dataset, tokenizer, data_collator, max_length = get_data(
