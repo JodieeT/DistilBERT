@@ -163,7 +163,7 @@ labels lives in [`results/case_studies.md`](results/case_studies.md).
 
 ---
 
-## Findings (for the poster)
+## Findings
 
 The qualitative analysis groups the 41 disagreements into four
 recurring linguistic patterns:
