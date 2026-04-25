@@ -23,6 +23,8 @@ inputs the distilled student loses on relative to the teacher**.
 | Training time (3 epochs, T4) | 391 s | 275 s | 1013 s | 530 s |
 | Training speed-up (DistilBERT vs BERT) |  | 1.42× |  | 1.91× |
 | Parameters | 109.5 M | 67.0 M | 109.5 M | 67.0 M |
+| Inference latency (ms / sample, eval throughput) | 2.24 | 1.98 | 3.48 | 1.87 |
+| Inference speed-up (DistilBERT vs BERT) |  | 1.13× |  | 1.86× |
 | Agreement rate (the two models give the same prediction) |  | 95.3% |  | 95.2% |
 
 DistilBERT is consistently the smaller, faster, slightly less accurate
