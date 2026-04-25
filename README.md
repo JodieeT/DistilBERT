@@ -27,6 +27,8 @@ inputs the distilled student loses on relative to the teacher**.
 | Inference speed-up (DistilBERT vs BERT) |  | 1.13× |  | 1.86× |
 | Agreement rate (the two models give the same prediction) |  | 95.3% |  | 95.2% |
 
+> Latency is computed as `1 / eval_samples_per_second` from `trainer.evaluate()` on the full evaluation set, with batch size 16 — same pipeline for both models. We do not use a separate warm-up benchmark; with 25K samples on IMDb (872 on SST-2) any warm-up overhead is dominated by averaging.
+
 DistilBERT is consistently the smaller, faster, slightly less accurate
 model. The headline accuracy gap is much larger on SST-2 (−2.87 pp)
 than on IMDb (−0.84 pp), but **the per-bucket story flips with input
