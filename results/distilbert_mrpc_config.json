@@ -1,0 +1,33 @@
+{
+    "model": "distilbert-base-uncased",
+    "task": "MRPC paraphrase identification",
+    "dataset": "mrpc",
+    "training": {
+        "num_train_epochs": 3,
+        "learning_rate": 2e-05,
+        "train_batch_size": 32,
+        "eval_batch_size": 32,
+        "weight_decay": 0.01,
+        "max_length": 128
+    },
+    "evaluation": {
+        "metric": "accuracy",
+        "final_eval_accuracy": 0.8357843137254902,
+        "final_eval_f1": 0.8834782608695653,
+        "final_eval_loss": 0.4117383658885956
+    },
+    "performance": {
+        "training_time_seconds": 31.456681966781616,
+        "inference_time_100_samples_seconds": 2.5359764099121094,
+        "avg_inference_time_per_sample_seconds": 0.025359764099121093
+    },
+    "model_stats": {
+        "num_parameters": 66955010
+    },
+    "environment": {
+        "transformers_version": "5.0.0",
+        "datasets_version": "4.0.0",
+        "python_version": "3.12.13"
+    },
+    "saved_model_path": "results/distilbert_mrpc_model"
+}

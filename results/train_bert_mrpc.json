@@ -1,0 +1,29 @@
+{
+    "dataset": "MRPC",
+    "model_name": "bert-base-uncased",
+    "max_length": 128,
+    "num_train_epochs": 3,
+    "learning_rate": 2e-05,
+    "train_batch_size": 32,
+    "eval_batch_size": 32,
+    "weight_decay": 0.01,
+    "trainable_parameters": 109483778,
+    "training_time_seconds": 52.07960081100464,
+    "train_metrics": {
+        "train_runtime": 51.8561,
+        "train_samples_per_second": 212.202,
+        "train_steps_per_second": 6.653,
+        "total_flos": 450668126729280.0,
+        "train_loss": 0.3998609929844953,
+        "epoch": 3.0
+    },
+    "eval_metrics": {
+        "eval_loss": 0.40947356820106506,
+        "eval_accuracy": 0.821078431372549,
+        "eval_f1": 0.8756388415672913,
+        "eval_runtime": 3.1095,
+        "eval_samples_per_second": 131.212,
+        "eval_steps_per_second": 4.181,
+        "epoch": 3.0
+    }
+}

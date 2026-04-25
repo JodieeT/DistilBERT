@@ -1,0 +1,7 @@
+Model: distilbert-base-uncased
+Dataset: mrpc
+Training time: 31.46 seconds
+Evaluation results: {'eval_loss': 0.4117383658885956, 'eval_accuracy': 0.8357843137254902, 'eval_f1': 0.8834782608695653, 'eval_runtime': 3.3923, 'eval_samples_per_second': 120.273, 'eval_steps_per_second': 3.832, 'epoch': 3.0}
+Total inference time on 100 samples: 2.5360 seconds
+Average inference time per sample: 0.025360 seconds
+Number of parameters: 66955010
