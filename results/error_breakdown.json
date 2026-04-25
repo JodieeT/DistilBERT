@@ -1,0 +1,109 @@
+{
+  "overall": {
+    "n_samples": 872,
+    "bert_accuracy": 0.9278,
+    "distilbert_accuracy": 0.8991,
+    "accuracy_gap": 0.0287,
+    "bert_f1": 0.9296,
+    "distilbert_f1": 0.9024,
+    "agreement_rate": 0.953
+  },
+  "by_category": {
+    "both_correct": {
+      "count": 776,
+      "pct_of_total": 88.99,
+      "mean_text_length_words": 19.52,
+      "median_text_length_words": 19,
+      "mean_text_length_chars": 105.75,
+      "mean_bert_confidence": 0.9917,
+      "mean_distilbert_confidence": 0.9919,
+      "negation_rate": 0.357,
+      "label_1_rate": 0.518
+    },
+    "both_wrong": {
+      "count": 55,
+      "pct_of_total": 6.31,
+      "mean_text_length_words": 18.98,
+      "median_text_length_words": 17,
+      "mean_text_length_chars": 102.45,
+      "mean_bert_confidence": 0.9327,
+      "mean_distilbert_confidence": 0.9583,
+      "negation_rate": 0.5091,
+      "label_1_rate": 0.4182
+    },
+    "bert_only_correct": {
+      "count": 33,
+      "pct_of_total": 3.78,
+      "mean_text_length_words": 21.03,
+      "median_text_length_words": 20,
+      "mean_text_length_chars": 115.12,
+      "mean_bert_confidence": 0.8805,
+      "mean_distilbert_confidence": 0.8932,
+      "negation_rate": 0.5758,
+      "label_1_rate": 0.4242
+    },
+    "distilbert_only_correct": {
+      "count": 8,
+      "pct_of_total": 0.92,
+      "mean_text_length_words": 20.5,
+      "median_text_length_words": 22,
+      "mean_text_length_chars": 99.5,
+      "mean_bert_confidence": 0.8676,
+      "mean_distilbert_confidence": 0.8845,
+      "negation_rate": 0.625,
+      "label_1_rate": 0.625
+    }
+  },
+  "length_buckets": [
+    {
+      "bucket": "[0,5)",
+      "n": 8,
+      "bert_acc": 1.0,
+      "distilbert_acc": 0.875,
+      "gap": 0.125
+    },
+    {
+      "bucket": "[5,10)",
+      "n": 115,
+      "bert_acc": 0.9304,
+      "distilbert_acc": 0.913,
+      "gap": 0.0174
+    },
+    {
+      "bucket": "[10,20)",
+      "n": 334,
+      "bert_acc": 0.9222,
+      "distilbert_acc": 0.8952,
+      "gap": 0.0269
+    },
+    {
+      "bucket": "[20,1000)",
+      "n": 415,
+      "bert_acc": 0.9301,
+      "distilbert_acc": 0.8988,
+      "gap": 0.0313
+    }
+  ],
+  "negation_split": {
+    "has_negation_0": {
+      "n": 543,
+      "bert_acc": 0.9448,
+      "distilbert_acc": 0.9245,
+      "gap": 0.0203
+    },
+    "has_negation_1": {
+      "n": 329,
+      "bert_acc": 0.8997,
+      "distilbert_acc": 0.8571,
+      "gap": 0.0426
+    }
+  },
+  "confidence": {
+    "bert_mean_conf_when_correct": 0.9872,
+    "bert_mean_conf_when_wrong": 0.9244,
+    "distilbert_mean_conf_when_correct": 0.9908,
+    "distilbert_mean_conf_when_wrong": 0.9339,
+    "mean_abs_confidence_diff": 0.0214,
+    "pearson_confidence_corr": 0.2599
+  }
+}
