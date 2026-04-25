@@ -1,4 +1,4 @@
-# DistilBERT vs BERT — error analysis on SST-2, IMDb, and MRPC
+# DistilBERT vs BERT — Error Analysis on SST-2, IMDb, and MRPC
 
 We fine-tune `bert-base-uncased` and `distilbert-base-uncased` on three
 GLUE-style benchmarks: **SST-2** (short, single-sentence sentiment),
