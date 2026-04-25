@@ -1,0 +1,103 @@
+{
+  "dataset": "mrpc",
+  "overall": {
+    "n_samples": 408,
+    "bert_accuracy": 0.8211,
+    "distilbert_accuracy": 0.8358,
+    "accuracy_gap": -0.0147,
+    "bert_f1": 0.8756,
+    "distilbert_f1": 0.8835,
+    "agreement_rate": 0.8627
+  },
+  "by_category": {
+    "both_correct": {
+      "count": 310,
+      "pct_of_total": 75.98,
+      "mean_text_length_words": 44.38,
+      "median_text_length_words": 45,
+      "mean_text_length_chars": 243.76,
+      "mean_bert_confidence": 0.8585,
+      "mean_distilbert_confidence": 0.8841,
+      "negation_rate": 0.3903,
+      "label_1_rate": 0.7903
+    },
+    "both_wrong": {
+      "count": 42,
+      "pct_of_total": 10.29,
+      "mean_text_length_words": 42.98,
+      "median_text_length_words": 42,
+      "mean_text_length_chars": 229.71,
+      "mean_bert_confidence": 0.7942,
+      "mean_distilbert_confidence": 0.7894,
+      "negation_rate": 0.2857,
+      "label_1_rate": 0.3095
+    },
+    "bert_only_correct": {
+      "count": 25,
+      "pct_of_total": 6.13,
+      "mean_text_length_words": 43.2,
+      "median_text_length_words": 44,
+      "mean_text_length_chars": 224.28,
+      "mean_bert_confidence": 0.7209,
+      "mean_distilbert_confidence": 0.6667,
+      "negation_rate": 0.32,
+      "label_1_rate": 0.48
+    },
+    "distilbert_only_correct": {
+      "count": 31,
+      "pct_of_total": 7.6,
+      "mean_text_length_words": 42.71,
+      "median_text_length_words": 39,
+      "mean_text_length_chars": 221.29,
+      "mean_bert_confidence": 0.6652,
+      "mean_distilbert_confidence": 0.7307,
+      "negation_rate": 0.3548,
+      "label_1_rate": 0.2903
+    }
+  },
+  "length_buckets": [
+    {
+      "bucket": "[0,30)",
+      "n": 39,
+      "bert_acc": 0.8462,
+      "distilbert_acc": 0.8462,
+      "gap": 0.0
+    },
+    {
+      "bucket": "[30,50)",
+      "n": 227,
+      "bert_acc": 0.8018,
+      "distilbert_acc": 0.8106,
+      "gap": -0.0088
+    },
+    {
+      "bucket": "[50,80)",
+      "n": 142,
+      "bert_acc": 0.8451,
+      "distilbert_acc": 0.8732,
+      "gap": -0.0282
+    }
+  ],
+  "negation_split": {
+    "has_negation_0": {
+      "n": 256,
+      "bert_acc": 0.8047,
+      "distilbert_acc": 0.8164,
+      "gap": -0.0117
+    },
+    "has_negation_1": {
+      "n": 152,
+      "bert_acc": 0.8487,
+      "distilbert_acc": 0.8684,
+      "gap": -0.0197
+    }
+  },
+  "confidence": {
+    "bert_mean_conf_when_correct": 0.8482,
+    "bert_mean_conf_when_wrong": 0.7395,
+    "distilbert_mean_conf_when_correct": 0.8702,
+    "distilbert_mean_conf_when_wrong": 0.7436,
+    "mean_abs_confidence_diff": 0.1123,
+    "pearson_confidence_corr": 0.4336
+  }
+}
