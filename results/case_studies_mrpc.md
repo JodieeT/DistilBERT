@@ -215,9 +215,10 @@ What's different about MRPC?
    So the MRPC effect is not driven by the kinds of compositional
    structure that hurt DistilBERT on SST-2.
 
-The takeaway: the cost of distillation is task-dependent, and on small
-sentence-pair tasks where the larger model is liable to overfit, the
-student is not strictly worse — and may even be the safer choice. On
-SST-2 and IMDb the story is the opposite: BERT extracts compositional
-signal that DistilBERT misses. *Compositionality favours capacity;
-small-data discrimination favours regularisation.*
+So the cost of distillation depends on the task. On a small
+sentence-pair dataset like MRPC, the larger model has more capacity to
+overfit and the student turns out to be the safer choice. On SST-2 and
+IMDb the picture is the opposite: BERT extracts compositional signal
+that DistilBERT misses, and the gap shows up in the kinds of sentences
+(negation, sarcasm, buried verdicts) where surface-level cues do not
+match the label.
