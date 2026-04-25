@@ -1,0 +1,28 @@
+{
+    "dataset": "IMDB",
+    "model_name": "bert-base-uncased",
+    "max_length": 256,
+    "num_train_epochs": 3,
+    "learning_rate": 2e-05,
+    "train_batch_size": 16,
+    "eval_batch_size": 16,
+    "weight_decay": 0.01,
+    "trainable_parameters": 109483778,
+    "training_time_seconds": 1013.6097233295441,
+    "train_metrics": {
+        "train_runtime": 1013.3546,
+        "train_samples_per_second": 74.012,
+        "train_steps_per_second": 4.627,
+        "total_flos": 9866631687118080.0,
+        "train_loss": 0.1752479344345812,
+        "epoch": 3.0
+    },
+    "eval_metrics": {
+        "eval_loss": 0.33088839054107666,
+        "eval_accuracy": 0.92416,
+        "eval_runtime": 86.9587,
+        "eval_samples_per_second": 287.493,
+        "eval_steps_per_second": 17.974,
+        "epoch": 3.0
+    }
+}

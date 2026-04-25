@@ -1,0 +1,7 @@
+Model: distilbert-base-uncased
+Dataset: imdb
+Training time: 529.95 seconds
+Evaluation results: {'eval_loss': 0.33606207370758057, 'eval_accuracy': 0.91576, 'eval_runtime': 46.6659, 'eval_samples_per_second': 535.723, 'eval_steps_per_second': 33.493, 'epoch': 3.0}
+Total inference time on 100 samples: 0.5063 seconds
+Average inference time per sample: 0.005063 seconds
+Number of parameters: 66955010

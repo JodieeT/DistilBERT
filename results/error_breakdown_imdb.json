@@ -1,0 +1,110 @@
+{
+  "dataset": "imdb",
+  "overall": {
+    "n_samples": 25000,
+    "bert_accuracy": 0.9242,
+    "distilbert_accuracy": 0.9158,
+    "accuracy_gap": 0.0084,
+    "bert_f1": 0.9249,
+    "distilbert_f1": 0.9162,
+    "agreement_rate": 0.9524
+  },
+  "by_category": {
+    "both_correct": {
+      "count": 22404,
+      "pct_of_total": 89.62,
+      "mean_text_length_words": 221.08,
+      "median_text_length_words": 168,
+      "mean_text_length_chars": 1250.94,
+      "mean_bert_confidence": 0.9941,
+      "mean_distilbert_confidence": 0.9903,
+      "negation_rate": 0.9676,
+      "label_1_rate": 0.5051
+    },
+    "both_wrong": {
+      "count": 1406,
+      "pct_of_total": 5.62,
+      "mean_text_length_words": 292.16,
+      "median_text_length_words": 224,
+      "mean_text_length_chars": 1659.62,
+      "mean_bert_confidence": 0.9532,
+      "mean_distilbert_confidence": 0.9491,
+      "negation_rate": 0.9794,
+      "label_1_rate": 0.4467
+    },
+    "bert_only_correct": {
+      "count": 700,
+      "pct_of_total": 2.8,
+      "mean_text_length_words": 292.51,
+      "median_text_length_words": 222,
+      "mean_text_length_chars": 1663.18,
+      "mean_bert_confidence": 0.9177,
+      "mean_distilbert_confidence": 0.867,
+      "negation_rate": 0.9857,
+      "label_1_rate": 0.5171
+    },
+    "distilbert_only_correct": {
+      "count": 490,
+      "pct_of_total": 1.96,
+      "mean_text_length_words": 294.83,
+      "median_text_length_words": 236,
+      "mean_text_length_chars": 1675.9,
+      "mean_bert_confidence": 0.8877,
+      "mean_distilbert_confidence": 0.9009,
+      "negation_rate": 0.9878,
+      "label_1_rate": 0.3939
+    }
+  },
+  "length_buckets": [
+    {
+      "bucket": "[0,100)",
+      "n": 3091,
+      "bert_acc": 0.9385,
+      "distilbert_acc": 0.9359,
+      "gap": 0.0026
+    },
+    {
+      "bucket": "[100,200)",
+      "n": 11744,
+      "bert_acc": 0.9468,
+      "distilbert_acc": 0.9379,
+      "gap": 0.0089
+    },
+    {
+      "bucket": "[200,400)",
+      "n": 7018,
+      "bert_acc": 0.9078,
+      "distilbert_acc": 0.9025,
+      "gap": 0.0053
+    },
+    {
+      "bucket": "[400,100000)",
+      "n": 3147,
+      "bert_acc": 0.8621,
+      "distilbert_acc": 0.8427,
+      "gap": 0.0194
+    }
+  ],
+  "negation_split": {
+    "has_negation_0": {
+      "n": 772,
+      "bert_acc": 0.9547,
+      "distilbert_acc": 0.9495,
+      "gap": 0.0052
+    },
+    "has_negation_1": {
+      "n": 24228,
+      "bert_acc": 0.9232,
+      "distilbert_acc": 0.9147,
+      "gap": 0.0085
+    }
+  },
+  "confidence": {
+    "bert_mean_conf_when_correct": 0.9918,
+    "bert_mean_conf_when_wrong": 0.9363,
+    "distilbert_mean_conf_when_correct": 0.9884,
+    "distilbert_mean_conf_when_wrong": 0.9218,
+    "mean_abs_confidence_diff": 0.019,
+    "pearson_confidence_corr": 0.2605
+  }
+}

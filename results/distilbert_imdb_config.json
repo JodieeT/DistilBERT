@@ -1,0 +1,32 @@
+{
+    "model": "distilbert-base-uncased",
+    "task": "IMDB sentiment classification",
+    "dataset": "imdb",
+    "training": {
+        "num_train_epochs": 3,
+        "learning_rate": 2e-05,
+        "train_batch_size": 16,
+        "eval_batch_size": 16,
+        "weight_decay": 0.01,
+        "max_length": 256
+    },
+    "evaluation": {
+        "metric": "accuracy",
+        "final_eval_accuracy": 0.91576,
+        "final_eval_loss": 0.33606207370758057
+    },
+    "performance": {
+        "training_time_seconds": 529.9547784328461,
+        "inference_time_100_samples_seconds": 0.5062763690948486,
+        "avg_inference_time_per_sample_seconds": 0.005062763690948486
+    },
+    "model_stats": {
+        "num_parameters": 66955010
+    },
+    "environment": {
+        "transformers_version": "5.0.0",
+        "datasets_version": "4.0.0",
+        "python_version": "3.12.13"
+    },
+    "saved_model_path": "results/distilbert_imdb_model"
+}
