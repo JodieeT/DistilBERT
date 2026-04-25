@@ -7,6 +7,7 @@ Reads:
 Writes:
     SST-2:  results/case_studies_candidates.csv
     IMDb:   results/case_studies_candidates_imdb.csv
+    MRPC:   results/case_studies_candidates_mrpc.csv
 
 The script does NOT pick the "best" cases automatically. It outputs every
 sample where the two models disagree, ranked by how confidently the wrong
@@ -16,6 +17,7 @@ analysis in `results/case_studies[_imdb].md`.
 Run from the repo root:
     python code/extract_cases.py                     # SST-2 (default)
     python code/extract_cases.py --dataset imdb
+    python code/extract_cases.py --dataset mrpc
 """
 
 import argparse
@@ -49,6 +51,14 @@ def output_path(dataset):
     return RESULTS / f"case_studies_candidates_{dataset}.csv"
 
 
+def synthesize_text_for_mrpc(df):
+    """MRPC stores sentence1/sentence2 separately. Join into a single 'text'
+    column so the negation/contrastive helpers can run unchanged."""
+    df = df.copy()
+    df["text"] = df["sentence1"].astype(str) + " || " + df["sentence2"].astype(str)
+    return df
+
+
 def truncate_for_print(text, n=200):
     s = str(text).replace("\n", " ").strip()
     return s if len(s) <= n else s[:n] + "..."
@@ -56,11 +66,14 @@ def truncate_for_print(text, n=200):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", choices=["sst2", "imdb"], default="sst2")
+    parser.add_argument("--dataset", choices=["sst2", "imdb", "mrpc"], default="sst2")
     args = parser.parse_args()
     dataset = args.dataset
 
     df = pd.read_csv(RESULTS / f"merged_predictions_{dataset}.csv")
+
+    if dataset == "mrpc":
+        df = synthesize_text_for_mrpc(df)
 
     df["n_negations"] = df["text"].apply(count_negations)
     df["has_contrastive"] = df["text"].apply(has_contrastive)
@@ -71,12 +84,20 @@ def main():
     bert_only = bert_only.sort_values("distilbert_confidence", ascending=False)
     distil_only = distil_only.sort_values("bert_confidence", ascending=False)
 
-    keep_cols = [
-        "id", "category", "text", "true_label",
-        "bert_pred", "bert_confidence",
-        "distilbert_pred", "distilbert_confidence",
-        "text_length_words", "has_negation", "n_negations", "has_contrastive",
-    ]
+    if dataset == "mrpc":
+        keep_cols = [
+            "id", "category", "sentence1", "sentence2", "true_label",
+            "bert_pred", "bert_confidence",
+            "distilbert_pred", "distilbert_confidence",
+            "text_length_words", "has_negation", "n_negations", "has_contrastive",
+        ]
+    else:
+        keep_cols = [
+            "id", "category", "text", "true_label",
+            "bert_pred", "bert_confidence",
+            "distilbert_pred", "distilbert_confidence",
+            "text_length_words", "has_negation", "n_negations", "has_contrastive",
+        ]
 
     out = pd.concat([bert_only[keep_cols], distil_only[keep_cols]], axis=0)
 

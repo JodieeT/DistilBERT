@@ -14,6 +14,7 @@ Writes:
 Run from the repo root:
     python code/error_analysis.py                  # SST-2 (default)
     python code/error_analysis.py --dataset imdb
+    python code/error_analysis.py --dataset mrpc
 """
 
 import argparse
@@ -34,6 +35,13 @@ CATEGORIES = [
 LENGTH_BUCKETS = {
     "sst2": ((0, 5), (5, 10), (10, 20), (20, 100000)),
     "imdb": ((0, 100), (100, 200), (200, 400), (400, 100000)),
+    "mrpc": ((0, 30), (30, 50), (50, 80), (80, 100000)),
+}
+
+JOIN_KEYS = {
+    "sst2": ["id", "text", "true_label", "text_length_words", "text_length_chars", "has_negation"],
+    "imdb": ["id", "text", "true_label", "text_length_words", "text_length_chars", "has_negation"],
+    "mrpc": ["id", "sentence1", "sentence2", "true_label", "text_length_words", "text_length_chars", "has_negation"],
 }
 
 
@@ -122,7 +130,7 @@ def output_paths(results_dir, dataset):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", choices=["sst2", "imdb"], default="sst2")
+    parser.add_argument("--dataset", choices=["sst2", "imdb", "mrpc"], default="sst2")
     args = parser.parse_args()
     dataset = args.dataset
 
@@ -140,7 +148,7 @@ def main():
     df_b = pd.read_csv(bert_csv)
     df_d = pd.read_csv(distil_csv)
 
-    join_keys = ["id", "text", "true_label", "text_length_words", "text_length_chars", "has_negation"]
+    join_keys = JOIN_KEYS[dataset]
     extra_d = ["distilbert_pred", "distilbert_confidence", "distilbert_prob_label_1", "distilbert_correct"]
     df = df_b.merge(df_d[join_keys + extra_d], on=join_keys, how="inner")
 

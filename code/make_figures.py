@@ -15,6 +15,7 @@ Writes:
 Run from the repo root:
     python code/make_figures.py                    # SST-2 (default)
     python code/make_figures.py --dataset imdb
+    python code/make_figures.py --dataset mrpc
 """
 
 import argparse
@@ -49,7 +50,7 @@ CAT_LABELS = {
     "distilbert_only_correct": "DistilBERT only correct",
 }
 
-DATASET_DISPLAY = {"sst2": "SST-2", "imdb": "IMDb"}
+DATASET_DISPLAY = {"sst2": "SST-2", "imdb": "IMDb", "mrpc": "MRPC"}
 
 plt.rcParams.update({
     "figure.dpi": 110,
@@ -359,7 +360,7 @@ def fig7_confidence_calibration(df, fig_dir, ds_label):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", choices=["sst2", "imdb"], default="sst2")
+    parser.add_argument("--dataset", choices=["sst2", "imdb", "mrpc"], default="sst2")
     args = parser.parse_args()
     dataset = args.dataset
     ds_label = DATASET_DISPLAY[dataset]
