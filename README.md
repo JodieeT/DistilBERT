@@ -30,6 +30,24 @@ model. The headline accuracy gap is much larger on SST-2 (−2.87 pp)
 than on IMDb (−0.84 pp), but **the per-bucket story flips with input
 length** — see below.
 
+### Comparison to the DistilBERT paper
+
+The original paper (Sanh et al., 2019) reports DistilBERT as 40% smaller,
+60% faster, and retaining ~97% of BERT's language-understanding ability.
+Our numbers track those claims:
+
+| Paper claim | Our measurement | Trend |
+|---|---|:-:|
+| 40% smaller | 39% smaller (67.0M / 109.5M params) | ✓ |
+| 60% faster (training) | 30% (SST-2) / 48% (IMDb) faster training | partial |
+| Retains ~97% of capability | 96.9% (SST-2) / 99.1% (IMDb) of BERT's accuracy | ✓ |
+
+The size and accuracy-retention numbers replicate the paper's headline
+trends almost exactly. Our training-speed advantage is smaller than the
+paper's claimed 60% — likely because both models hit the same input-pipe
+and tokenization overhead on a single T4, which dominates wall-clock at
+our batch sizes more than at the paper's training scale.
+
 ### Where the gap lives
 
 The two datasets stress the student in different ways:
