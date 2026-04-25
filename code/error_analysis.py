@@ -1,23 +1,25 @@
 """
-Error analysis: compare BERT and DistilBERT predictions on the same SST-2 validation set.
+Error analysis: compare BERT and DistilBERT predictions on the same eval set.
 
 Reads:
-    results/predict_bert_sst2.csv
-    results/predict_distilbert_sst2.csv
+    results/predict_bert_{dataset}.csv
+    results/predict_distilbert_{dataset}.csv
 
 Writes:
-    results/merged_predictions_sst2.csv   per-sample merged table with category column
-    results/error_breakdown.json          aggregate stats per category + overall
+    results/merged_predictions_{dataset}.csv  per-sample merged table with category column
+    results/error_breakdown{suffix}.json      aggregate stats per category + overall
+        (suffix = ""    for sst2, kept for backwards compat with the existing file)
+        (suffix = "_imdb" for imdb)
 
 Run from the repo root:
-    python code/error_analysis.py
+    python code/error_analysis.py                  # SST-2 (default)
+    python code/error_analysis.py --dataset imdb
 """
 
+import argparse
 import json
-import os
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score
 
@@ -28,6 +30,11 @@ CATEGORIES = [
     "bert_only_correct",
     "distilbert_only_correct",
 ]
+
+LENGTH_BUCKETS = {
+    "sst2": ((0, 5), (5, 10), (10, 20), (20, 100000)),
+    "imdb": ((0, 100), (100, 200), (200, 400), (400, 100000)),
+}
 
 
 def categorize(row):
@@ -61,7 +68,7 @@ def category_stats(df):
     return out
 
 
-def length_bucket_accuracy(df, buckets=((0, 5), (5, 10), (10, 20), (20, 1000))):
+def length_bucket_accuracy(df, buckets):
     rows = []
     for lo, hi in buckets:
         mask = (df["text_length_words"] >= lo) & (df["text_length_words"] < hi)
@@ -104,12 +111,26 @@ def confidence_stats(df):
     }
 
 
+def output_paths(results_dir, dataset):
+    merged = results_dir / f"merged_predictions_{dataset}.csv"
+    if dataset == "sst2":
+        breakdown = results_dir / "error_breakdown.json"
+    else:
+        breakdown = results_dir / f"error_breakdown_{dataset}.json"
+    return merged, breakdown
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", choices=["sst2", "imdb"], default="sst2")
+    args = parser.parse_args()
+    dataset = args.dataset
+
     repo_root = Path(__file__).resolve().parent.parent
     results_dir = repo_root / "results"
 
-    bert_csv = results_dir / "predict_bert_sst2.csv"
-    distil_csv = results_dir / "predict_distilbert_sst2.csv"
+    bert_csv = results_dir / f"predict_bert_{dataset}.csv"
+    distil_csv = results_dir / f"predict_distilbert_{dataset}.csv"
 
     if not bert_csv.exists() or not distil_csv.exists():
         raise FileNotFoundError(
@@ -139,25 +160,25 @@ def main():
     }
 
     breakdown = {
+        "dataset": dataset,
         "overall": overall,
         "by_category": category_stats(df),
-        "length_buckets": length_bucket_accuracy(df),
+        "length_buckets": length_bucket_accuracy(df, LENGTH_BUCKETS[dataset]),
         "negation_split": negation_split_accuracy(df),
         "confidence": confidence_stats(df),
     }
 
-    merged_csv = results_dir / "merged_predictions_sst2.csv"
+    merged_csv, breakdown_path = output_paths(results_dir, dataset)
     df.to_csv(merged_csv, index=False)
     print(f"Merged predictions saved to: {merged_csv}")
 
-    breakdown_path = results_dir / "error_breakdown.json"
     with open(breakdown_path, "w") as f:
         json.dump(breakdown, f, indent=2)
     print(f"Error breakdown saved to:    {breakdown_path}")
 
     print()
     print("=" * 60)
-    print("OVERALL")
+    print(f"OVERALL  ({dataset})")
     print("=" * 60)
     for k, v in overall.items():
         print(f"  {k}: {v}")
@@ -179,7 +200,7 @@ def main():
     print("LENGTH BUCKETS (bert_acc vs distilbert_acc)")
     print("=" * 60)
     for r in breakdown["length_buckets"]:
-        print(f"  {r['bucket']:>10}  n={r['n']:<4}  bert={r['bert_acc']:.4f}  distil={r['distilbert_acc']:.4f}  gap={r['gap']:+.4f}")
+        print(f"  {r['bucket']:>14}  n={r['n']:<6}  bert={r['bert_acc']:.4f}  distil={r['distilbert_acc']:.4f}  gap={r['gap']:+.4f}")
 
     print()
     print("=" * 60)

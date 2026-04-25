@@ -1,26 +1,23 @@
 """
-Generate figures for the BERT vs DistilBERT error analysis on SST-2.
+Generate figures for the BERT vs DistilBERT error analysis.
 
-Reads:
-    results/merged_predictions_sst2.csv       (output of error_analysis.py)
-    results/error_breakdown.json              (output of error_analysis.py)
-    results/train_bert_sst2.json              (output of train_bert.py)
-    results/distilbert_sst2_config.json       (output of train_distilbert.py)
-    results/distilbert_sst2_results.txt       (output of train_distilbert.py)
+Reads (depending on --dataset):
+    results/merged_predictions_{dataset}.csv     (output of error_analysis.py)
+    results/error_breakdown[_imdb].json          (output of error_analysis.py)
+    results/train_bert_{dataset}.json            (output of train_bert.py)
+    results/distilbert_{dataset}_config.json     (output of train_distilbert.py)
+    results/distilbert_{dataset}_results.txt     (output of train_distilbert.py)
 
 Writes:
-    results/figures/fig1_overall_metrics.png
-    results/figures/fig2_error_categories.png
-    results/figures/fig3_length_buckets.png
-    results/figures/fig4_negation_split.png
-    results/figures/fig5_length_per_category.png
-    results/figures/fig6_confidence_scatter.png
-    results/figures/fig7_confidence_calibration.png
+    SST-2:  results/figures/figN_*.png
+    IMDb:   results/figures_imdb/figN_*.png
 
 Run from the repo root:
-    python code/make_figures.py
+    python code/make_figures.py                    # SST-2 (default)
+    python code/make_figures.py --dataset imdb
 """
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -32,11 +29,8 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results"
-FIG_DIR = RESULTS / "figures"
-FIG_DIR.mkdir(exist_ok=True)
 
 
-# Consistent colors across figures
 BERT_COLOR = "#3b82f6"      # blue
 DISTIL_COLOR = "#f97316"    # orange
 GREEN = "#10b981"
@@ -55,6 +49,8 @@ CAT_LABELS = {
     "distilbert_only_correct": "DistilBERT only correct",
 }
 
+DATASET_DISPLAY = {"sst2": "SST-2", "imdb": "IMDb"}
+
 plt.rcParams.update({
     "figure.dpi": 110,
     "savefig.dpi": 200,
@@ -66,12 +62,7 @@ plt.rcParams.update({
 })
 
 
-# ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
-
 def load_eval_samples_per_second_from_txt(txt_path):
-    """Parse 'eval_samples_per_second': 505.17 out of the DistilBERT txt summary."""
     if not txt_path.exists():
         return None
     text = txt_path.read_text()
@@ -79,31 +70,39 @@ def load_eval_samples_per_second_from_txt(txt_path):
     return float(m.group(1)) if m else None
 
 
-def load_data():
-    df = pd.read_csv(RESULTS / "merged_predictions_sst2.csv")
-    with open(RESULTS / "error_breakdown.json") as f:
+def paths_for(dataset):
+    if dataset == "sst2":
+        breakdown_path = RESULTS / "error_breakdown.json"
+        fig_dir = RESULTS / "figures"
+    else:
+        breakdown_path = RESULTS / f"error_breakdown_{dataset}.json"
+        fig_dir = RESULTS / f"figures_{dataset}"
+    return {
+        "merged_csv": RESULTS / f"merged_predictions_{dataset}.csv",
+        "breakdown": breakdown_path,
+        "bert_meta": RESULTS / f"train_bert_{dataset}.json",
+        "distil_meta": RESULTS / f"distilbert_{dataset}_config.json",
+        "distil_txt": RESULTS / f"distilbert_{dataset}_results.txt",
+        "fig_dir": fig_dir,
+    }
+
+
+def load_data(dataset):
+    p = paths_for(dataset)
+    df = pd.read_csv(p["merged_csv"])
+    with open(p["breakdown"]) as f:
         breakdown = json.load(f)
-
-    bert_meta = json.load(open(RESULTS / "train_bert_sst2.json"))
-    distil_meta = json.load(open(RESULTS / "distilbert_sst2_config.json"))
-
-    distil_eval_sps = load_eval_samples_per_second_from_txt(
-        RESULTS / "distilbert_sst2_results.txt"
-    )
-
-    return df, breakdown, bert_meta, distil_meta, distil_eval_sps
+    bert_meta = json.load(open(p["bert_meta"]))
+    distil_meta = json.load(open(p["distil_meta"]))
+    distil_eval_sps = load_eval_samples_per_second_from_txt(p["distil_txt"])
+    return df, breakdown, bert_meta, distil_meta, distil_eval_sps, p["fig_dir"]
 
 
-# ---------------------------------------------------------------------------
-# Figure 1: Overall metrics (quality + size + speed)
-# ---------------------------------------------------------------------------
-
-def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
+def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps, fig_dir, ds_label):
     overall = breakdown["overall"]
 
     fig, axes = plt.subplots(1, 4, figsize=(15, 4.2))
 
-    # --- Panel A: accuracy + F1 ---
     metrics = ["accuracy", "F1"]
     bert_vals = [overall["bert_accuracy"], overall["bert_f1"]]
     distil_vals = [overall["distilbert_accuracy"], overall["distilbert_f1"]]
@@ -114,7 +113,8 @@ def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
     axes[0].bar(x + w / 2, distil_vals, w, label="DistilBERT", color=DISTIL_COLOR)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(metrics)
-    axes[0].set_ylim(0.85, 1.0)
+    y_min = min(min(bert_vals), min(distil_vals)) - 0.05
+    axes[0].set_ylim(max(0, y_min), 1.0)
     axes[0].set_title(f"Quality (gap: -{overall['accuracy_gap']*100:.2f}pp acc)")
     axes[0].set_ylabel("Score")
     axes[0].legend(loc="lower right", fontsize=9)
@@ -122,7 +122,6 @@ def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
         axes[0].text(i - w / 2, b + 0.003, f"{b:.3f}", ha="center", fontsize=9)
         axes[0].text(i + w / 2, d + 0.003, f"{d:.3f}", ha="center", fontsize=9)
 
-    # --- Panel B: parameters ---
     bert_params = bert_meta["trainable_parameters"] / 1e6
     distil_params = distil_meta["model_stats"]["num_parameters"] / 1e6
     axes[1].bar(["BERT", "DistilBERT"], [bert_params, distil_params],
@@ -135,7 +134,6 @@ def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
         axes[1].text(i, v + 1.5, f"{v:.1f}M", ha="center", fontsize=10)
     axes[1].set_ylim(0, max(bert_params, distil_params) * 1.15)
 
-    # --- Panel C: training time ---
     bert_time = bert_meta["training_time_seconds"]
     distil_time = distil_meta["performance"]["training_time_seconds"]
     axes[2].bar(["BERT", "DistilBERT"], [bert_time, distil_time],
@@ -145,17 +143,16 @@ def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
         f"Training time\n(DistilBERT = {distil_time / bert_time:.0%} of BERT)"
     )
     for i, v in enumerate([bert_time, distil_time]):
-        axes[2].text(i, v + 8, f"{v:.0f}s", ha="center", fontsize=10)
+        axes[2].text(i, v + max(bert_time, distil_time) * 0.02, f"{v:.0f}s",
+                     ha="center", fontsize=10)
     axes[2].set_ylim(0, max(bert_time, distil_time) * 1.18)
 
-    # --- Panel D: inference latency (per sample, ms) on full eval set ---
     bert_eval_sps = bert_meta["eval_metrics"]["eval_samples_per_second"]
     bert_lat_ms = 1000.0 / bert_eval_sps
     if distil_eval_sps is not None:
         distil_lat_ms = 1000.0 / distil_eval_sps
         speedup_str = f"{bert_lat_ms / distil_lat_ms:.2f}x faster"
     else:
-        # Fallback: 100-sample inline test from train_distilbert.py
         distil_lat_ms = (
             distil_meta["performance"]["avg_inference_time_per_sample_seconds"] * 1000
         )
@@ -170,30 +167,27 @@ def fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps):
                      f"{v:.2f} ms", ha="center", fontsize=10)
     axes[3].set_ylim(0, max(bert_lat_ms, distil_lat_ms) * 1.18)
 
-    fig.suptitle("BERT vs DistilBERT — overall comparison on SST-2", y=1.02,
-                 fontsize=13)
+    fig.suptitle(f"BERT vs DistilBERT — overall comparison on {ds_label}",
+                 y=1.02, fontsize=13)
     plt.tight_layout()
-    out = FIG_DIR / "fig1_overall_metrics.png"
+    out = fig_dir / "fig1_overall_metrics.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 2: Error category breakdown
-# ---------------------------------------------------------------------------
-
-def fig2_error_categories(breakdown):
+def fig2_error_categories(breakdown, fig_dir, ds_label):
     cats = list(CAT_LABELS.keys())
     counts = [breakdown["by_category"][c]["count"] for c in cats]
     pcts = [breakdown["by_category"][c]["pct_of_total"] for c in cats]
     colors = [CAT_COLORS[c] for c in cats]
     labels = [CAT_LABELS[c] for c in cats]
+    n_total = breakdown["overall"]["n_samples"]
 
     fig, ax = plt.subplots(figsize=(8, 5))
     bars = ax.bar(labels, counts, color=colors)
-    ax.set_ylabel("# samples (of 872)")
-    ax.set_title("Error category breakdown — SST-2 validation")
+    ax.set_ylabel(f"# samples (of {n_total})")
+    ax.set_title(f"Error category breakdown — {ds_label} eval set")
     for bar, p, c in zip(bars, pcts, counts):
         ax.text(bar.get_x() + bar.get_width() / 2,
                 bar.get_height() + max(counts) * 0.01,
@@ -201,17 +195,13 @@ def fig2_error_categories(breakdown):
     ax.set_ylim(0, max(counts) * 1.18)
     plt.xticks(rotation=15)
     plt.tight_layout()
-    out = FIG_DIR / "fig2_error_categories.png"
+    out = fig_dir / "fig2_error_categories.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 3: Accuracy by text length bucket
-# ---------------------------------------------------------------------------
-
-def fig3_length_buckets(breakdown):
+def fig3_length_buckets(breakdown, fig_dir, ds_label):
     rows = breakdown["length_buckets"]
     labels = [r["bucket"] for r in rows]
     bert_acc = [r["bert_acc"] for r in rows]
@@ -222,7 +212,7 @@ def fig3_length_buckets(breakdown):
     x = np.arange(len(labels))
     w = 0.36
 
-    fig, ax = plt.subplots(figsize=(8.5, 5))
+    fig, ax = plt.subplots(figsize=(9, 5))
     ax.bar(x - w / 2, bert_acc, w, label="BERT", color=BERT_COLOR)
     ax.bar(x + w / 2, distil_acc, w, label="DistilBERT", color=DISTIL_COLOR)
     ax.set_xticks(x)
@@ -232,24 +222,21 @@ def fig3_length_buckets(breakdown):
     )
     ax.set_ylabel("Accuracy")
     ax.set_xlabel("Text length (words)")
-    ax.set_title("Accuracy by text length")
-    ax.set_ylim(0.5, 1.05)
+    ax.set_title(f"Accuracy by text length — {ds_label}")
+    y_min = min(min(bert_acc), min(distil_acc)) - 0.05
+    ax.set_ylim(max(0.0, y_min), 1.05)
     ax.legend(loc="lower right", fontsize=10)
     for i, (b, d) in enumerate(zip(bert_acc, distil_acc)):
         ax.text(i - w / 2, b + 0.008, f"{b:.3f}", ha="center", fontsize=9)
         ax.text(i + w / 2, d + 0.008, f"{d:.3f}", ha="center", fontsize=9)
     plt.tight_layout()
-    out = FIG_DIR / "fig3_length_buckets.png"
+    out = fig_dir / "fig3_length_buckets.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 4: Negation / contrastive marker split
-# ---------------------------------------------------------------------------
-
-def fig4_negation_split(breakdown):
+def fig4_negation_split(breakdown, fig_dir, ds_label):
     neg = breakdown["negation_split"]
     labels = ["No negation", "Has negation\n(not / no / never / n't / but / however / although)"]
     bert_acc = [neg["has_negation_0"]["bert_acc"], neg["has_negation_1"]["bert_acc"]]
@@ -269,24 +256,21 @@ def fig4_negation_split(breakdown):
          for lbl, ni, gi in zip(labels, n, gaps)]
     )
     ax.set_ylabel("Accuracy")
-    ax.set_title("Accuracy on sentences with vs without negation/contrast markers")
-    ax.set_ylim(0.7, 1.0)
+    ax.set_title(f"Accuracy on sentences with vs without negation/contrast markers — {ds_label}")
+    y_min = min(min(bert_acc), min(distil_acc)) - 0.05
+    ax.set_ylim(max(0.0, y_min), 1.0)
     ax.legend(loc="lower right", fontsize=10)
     for i, (b, d) in enumerate(zip(bert_acc, distil_acc)):
         ax.text(i - w / 2, b + 0.004, f"{b:.3f}", ha="center", fontsize=9)
         ax.text(i + w / 2, d + 0.004, f"{d:.3f}", ha="center", fontsize=9)
     plt.tight_layout()
-    out = FIG_DIR / "fig4_negation_split.png"
+    out = fig_dir / "fig4_negation_split.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 5: Text-length distribution per category (box plot)
-# ---------------------------------------------------------------------------
-
-def fig5_length_per_category(df):
+def fig5_length_per_category(df, fig_dir, ds_label):
     cats = list(CAT_LABELS.keys())
     data = [df[df.category == c]["text_length_words"].values for c in cats]
     colors = [CAT_COLORS[c] for c in cats]
@@ -303,47 +287,39 @@ def fig5_length_per_category(df):
     for med in bp["medians"]:
         med.set_color("black")
     ax.set_ylabel("Text length (words)")
-    ax.set_title("Text length distribution per error category")
+    ax.set_title(f"Text length distribution per error category — {ds_label}")
     plt.xticks(rotation=12)
     plt.tight_layout()
-    out = FIG_DIR / "fig5_length_per_category.png"
+    out = fig_dir / "fig5_length_per_category.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 6: BERT confidence vs DistilBERT confidence scatter
-# ---------------------------------------------------------------------------
-
-def fig6_confidence_scatter(df):
+def fig6_confidence_scatter(df, fig_dir, ds_label):
     fig, ax = plt.subplots(figsize=(7, 6))
     for cat in CAT_LABELS:
         sub = df[df.category == cat]
         if len(sub) == 0:
             continue
         ax.scatter(sub.bert_confidence, sub.distilbert_confidence,
-                   alpha=0.55, s=22, label=f"{CAT_LABELS[cat]} (n={len(sub)})",
+                   alpha=0.45, s=18, label=f"{CAT_LABELS[cat]} (n={len(sub)})",
                    color=CAT_COLORS[cat], edgecolor="none")
     ax.plot([0.5, 1.0], [0.5, 1.0], "k--", alpha=0.4, lw=1, label="y = x")
     ax.set_xlabel("BERT confidence")
     ax.set_ylabel("DistilBERT confidence")
-    ax.set_title("Per-sample confidence — BERT vs DistilBERT")
+    ax.set_title(f"Per-sample confidence — BERT vs DistilBERT ({ds_label})")
     ax.set_xlim(0.49, 1.005)
     ax.set_ylim(0.49, 1.005)
     ax.legend(loc="lower right", fontsize=9, framealpha=0.9)
     plt.tight_layout()
-    out = FIG_DIR / "fig6_confidence_scatter.png"
+    out = fig_dir / "fig6_confidence_scatter.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Figure 7: Confidence calibration (mean conf when correct vs wrong)
-# ---------------------------------------------------------------------------
-
-def fig7_confidence_calibration(df):
+def fig7_confidence_calibration(df, fig_dir, ds_label):
     models = ["BERT", "DistilBERT"]
     correct = [
         df.loc[df.bert_correct == 1, "bert_confidence"].mean(),
@@ -362,41 +338,44 @@ def fig7_confidence_calibration(df):
     ax.set_xticks(x)
     ax.set_xticklabels(models)
     ax.set_ylabel("Mean confidence")
-    ax.set_title("Calibration — confidence on correct vs wrong predictions")
-    ax.set_ylim(0.7, 1.0)
+    ax.set_title(f"Calibration — confidence on correct vs wrong predictions ({ds_label})")
+    y_min = min(min(correct), min(wrong)) - 0.05
+    ax.set_ylim(max(0.0, y_min), 1.0)
     ax.legend(loc="lower right", fontsize=10)
     for i, (cm, wm) in enumerate(zip(correct, wrong)):
         ax.text(i - w / 2, cm + 0.004, f"{cm:.3f}", ha="center", fontsize=9)
         ax.text(i + w / 2, wm + 0.004, f"{wm:.3f}", ha="center", fontsize=9)
 
-    # Annotate the gap (over-confidence on wrong predictions)
     ax.text(0.5, 0.97,
             f"DistilBERT is more confident when wrong\n(gap to BERT: {wrong[1] - wrong[0]:+.3f})",
             transform=ax.transAxes, ha="center", va="top",
             fontsize=9, style="italic", color="#444")
     plt.tight_layout()
-    out = FIG_DIR / "fig7_confidence_calibration.png"
+    out = fig_dir / "fig7_confidence_calibration.png"
     plt.savefig(out, bbox_inches="tight")
     plt.close()
     print(f"  saved {out.relative_to(ROOT)}")
 
 
-# ---------------------------------------------------------------------------
-# Driver
-# ---------------------------------------------------------------------------
-
 def main():
-    df, breakdown, bert_meta, distil_meta, distil_eval_sps = load_data()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset", choices=["sst2", "imdb"], default="sst2")
+    args = parser.parse_args()
+    dataset = args.dataset
+    ds_label = DATASET_DISPLAY[dataset]
 
-    print("Generating figures...")
-    fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps)
-    fig2_error_categories(breakdown)
-    fig3_length_buckets(breakdown)
-    fig4_negation_split(breakdown)
-    fig5_length_per_category(df)
-    fig6_confidence_scatter(df)
-    fig7_confidence_calibration(df)
-    print(f"\nAll figures saved to {FIG_DIR.relative_to(ROOT)}/")
+    df, breakdown, bert_meta, distil_meta, distil_eval_sps, fig_dir = load_data(dataset)
+    fig_dir.mkdir(exist_ok=True)
+
+    print(f"Generating figures for {ds_label}...")
+    fig1_overall_metrics(breakdown, bert_meta, distil_meta, distil_eval_sps, fig_dir, ds_label)
+    fig2_error_categories(breakdown, fig_dir, ds_label)
+    fig3_length_buckets(breakdown, fig_dir, ds_label)
+    fig4_negation_split(breakdown, fig_dir, ds_label)
+    fig5_length_per_category(df, fig_dir, ds_label)
+    fig6_confidence_scatter(df, fig_dir, ds_label)
+    fig7_confidence_calibration(df, fig_dir, ds_label)
+    print(f"\nAll figures saved to {fig_dir.relative_to(ROOT)}/")
 
 
 if __name__ == "__main__":
