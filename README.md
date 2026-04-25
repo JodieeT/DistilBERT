@@ -1,10 +1,11 @@
 # DistilBERT vs BERT — error analysis on SST-2, IMDb, and MRPC
 
 We fine-tune `bert-base-uncased` and `distilbert-base-uncased` on three
-GLUE-style benchmarks — **SST-2** (short, single-sentence sentiment),
+GLUE-style benchmarks: **SST-2** (short, single-sentence sentiment),
 **IMDb** (long, multi-paragraph sentiment), and **MRPC** (sentence-pair
-paraphrase identification) — and study **what kinds of inputs the
-distilled student loses on relative to the teacher, and where it wins**.
+paraphrase identification). The goal is to characterise **what kinds of
+inputs the distilled student loses on relative to the teacher, and where
+it wins**.
 
 > Research question: *How much performance is lost by distillation, and
 > what kinds of examples are most affected?*
@@ -47,7 +48,7 @@ Our numbers track those claims, with MRPC as an interesting outlier:
 | Retains ~97% of capability | 96.9% (SST-2) / 99.1% (IMDb) / **101.8%** (MRPC) of BERT's accuracy | ✓+ |
 
 The size and accuracy-retention numbers replicate the paper's headline
-trends, and MRPC actually *exceeds* 100% retention — i.e. the student
+trends, and MRPC actually *exceeds* 100% retention, i.e. the student
 beats the teacher. Our training-speed advantage is smaller than the
 paper's claimed 60%, likely because all three runs hit the same
 input-pipe and tokenization overhead on a single T4, which dominates
@@ -66,12 +67,12 @@ The three datasets stress the student in different ways:
 | Agreement rate | 95.3% | 95.2% | **86.3%** |
 
 The unifying observation: **DistilBERT loses where sentiment is encoded
-compositionally** — through negation/sarcasm in short text (SST-2) or
-through the position of the verdict in a long review (IMDb). On a small
-sentence-pair task (MRPC, n_train = 3,668), the larger model's extra
-capacity becomes a liability, not an asset, and the student wins by
-being more conservative — refusing to call two sentences a paraphrase
-just because they share lexical material.
+compositionally**, i.e. through negation/sarcasm in short text (SST-2)
+or through the position of the verdict in a long review (IMDb). On a
+small sentence-pair task (MRPC, n_train = 3,668), the larger model's
+extra capacity becomes a liability instead of an asset, and the student
+wins by being more conservative. It refuses to call two sentences a
+paraphrase just because they share lexical material.
 
 Full numbers:
 [`results/error_breakdown.json`](results/error_breakdown.json) (SST-2) ·
@@ -182,7 +183,7 @@ python code/train_distilbert_mrpc.py
 
 Writes the fine-tuned model checkpoints to `results/{sst2,imdb,mrpc}_bert_base/`
 and `results/distilbert_{sst2,imdb,mrpc}_model/`. Model weight files are large
-(~440 MB BERT, ~270 MB DistilBERT) and are *not* committed — only the small
+(~440 MB BERT, ~270 MB DistilBERT) and are *not* committed; only the small
 metric JSON/TXT files are.
 
 ### 3. Generate per-sample prediction CSVs
@@ -193,7 +194,7 @@ python code/predict.py --model both --dataset imdb
 python code/predict_mrpc.py --model both
 ```
 
-Writes `results/predict_{bert,distilbert}_{dataset}.csv` — one row per
+Writes `results/predict_{bert,distilbert}_{dataset}.csv`, one row per
 evaluation sample, with text(s), true label, predicted label, confidence,
 length, and a negation flag. MRPC has its own predict script because it uses
 sentence-pair tokenization (`tokenizer(s1, s2)`) instead of single-text
@@ -250,7 +251,7 @@ python code/extract_cases.py --dataset imdb
 python code/extract_cases.py --dataset mrpc
 ```
 
-Writes `results/case_studies_candidates{,_imdb,_mrpc}.csv` — all
+Writes `results/case_studies_candidates{,_imdb,_mrpc}.csv` listing all
 disagreements between the two models, ranked by how confidently the
 wrong model held its position. The hand-curated subsets with
 linguistic-phenomenon labels live in
@@ -319,18 +320,18 @@ Per-case discussion: [`results/case_studies_mrpc.md`](results/case_studies_mrpc.
 
 DistilBERT is fine on short, sentiment-rich text where bag-of-tokens cues
 align with the label, and breaks where sentiment is encoded
-*compositionally* — through negation, contrastive structure, sarcasm, or
+*compositionally*: through negation, contrastive structure, sarcasm, or
 idiom (SST-2), or through the position of the verdict inside a long
 mixed-sentiment document (IMDb). The student's mean confidence on its
 mistakes is essentially as high as on its successes (0.87–0.89 on the
 sentiment tasks), so simple rejection-by-confidence is not a useful
 safety net.
 
-On MRPC the picture inverts: with only 3,668 training pairs, the larger
-model's extra capacity becomes a liability — BERT over-predicts paraphrase
+On MRPC the picture inverts. With only 3,668 training pairs, the larger
+model's extra capacity becomes a liability: BERT over-predicts paraphrase
 based on shared surface material, and DistilBERT's stricter
-discrimination wins. *Compositionality favours capacity; small-data
-discrimination favours regularisation.*
+discrimination wins. The cost of distillation, in other words, is
+task-dependent.
 
 ---
 
