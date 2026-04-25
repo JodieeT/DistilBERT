@@ -249,13 +249,13 @@ datasets), so simple rejection-by-confidence is not a useful safety net.
 
 ## References
 
-- Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2019).
-  *DistilBERT, a distilled version of BERT: smaller, faster, cheaper and
-  lighter.* [arXiv:1910.01108](https://arxiv.org/abs/1910.01108)
 - Devlin, J. *et al.* (2019). *BERT: Pre-training of deep bidirectional
   transformers for language understanding.*
   [arXiv:1810.04805](https://arxiv.org/abs/1810.04805)
-- Socher, R. *et al.* (2013). *Recursive deep models for semantic
-  compositionality over a sentiment treebank.* (SST-2 dataset)
 - Maas, A. L. *et al.* (2011). *Learning word vectors for sentiment
   analysis.* (IMDb dataset)
+- Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2019).
+  *DistilBERT, a distilled version of BERT: smaller, faster, cheaper and
+  lighter.* [arXiv:1910.01108](https://arxiv.org/abs/1910.01108)
+- Socher, R. *et al.* (2013). *Recursive deep models for semantic
+  compositionality over a sentiment treebank.* (SST-2 dataset)
