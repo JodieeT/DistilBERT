@@ -34,10 +34,11 @@ Then §4 covers the reverse direction (DistilBERT correct, BERT wrong),
 which is where contrastive structure ("X is a mess, **but** it's an
 entertaining mess") sometimes flips the teacher.
 
-A striking observation across §1–§3: **DistilBERT does not just disagree —
-it is over-confidently wrong.** Mean DistilBERT confidence on the 700
-`bert_only_correct` reviews is **0.867**, despite 0% accuracy on those
-samples. This calibration failure is also visible in
+One pattern worth flagging across §1–§3: when DistilBERT gets a review
+wrong, it is not hedging. Its mean confidence on the 700 `bert_only_correct`
+reviews is **0.867**, despite 0% accuracy on those samples. The student
+fails silently rather than expressing uncertainty. The same calibration
+failure is visible in
 [`fig7_confidence_calibration.png`](figures_imdb/fig7_confidence_calibration.png).
 And from [`fig3_length_buckets.png`](figures_imdb/fig3_length_buckets.png),
 the gap grows from +0.26 pp on reviews under 100 words to **+1.94 pp on
