@@ -12,6 +12,23 @@ it wins**.
 
 ---
 
+## Table of Contents
+* [Headline Results](#headline-results)
+    * [Aggregate Metrics](#aggregate-metrics)
+    * [Comparison to Paper](#comparison-to-the-distilbert-paper)
+    * [Where the Gap Lives](#where-the-gap-lives)
+* [Repository Structure](#repository-structure)
+* [Reproducing the Experiments](#reproducing-the-experiments)
+* [Findings](#findings)
+    * [SST-2 Analysis](#sst-2-short-single-sentence--41-disagreements-4-themes)
+    * [IMDb Analysis](#imdb-long-multi-paragraph--1190-disagreements-4-themes)
+    * [MRPC Analysis](#mrpc-sentence-pair-paraphrase--56-disagreements-student-wins)
+* [Limitations](#limitations)
+* [Future Work](#future-work)
+* [Conclusion](#conclusion)
+
+---
+
 ## Headline results
 
 ### Aggregate metrics
