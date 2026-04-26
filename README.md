@@ -107,7 +107,7 @@ Figures:
 [`results/figures_imdb/`](results/figures_imdb/) ·
 [`results/figures_mrpc/`](results/figures_mrpc/).
 Hand-annotated qualitative analysis:
-[`results/case_studies.md`](results/case_studies.md) ·
+[`results/case_studies_sst2.md`](results/case_studies_sst2.md) ·
 [`results/case_studies_imdb.md`](results/case_studies_imdb.md) ·
 [`results/case_studies_mrpc.md`](results/case_studies_mrpc.md).
 
@@ -148,7 +148,7 @@ DistilBERT/
 │   ├── predict_distilbert_sst2.csv           # SST-2 per-sample DistilBERT predictions
 │   ├── merged_predictions_sst2.csv           # joined + 4-category labelled
 │   ├── error_breakdown_sst2.json                  # SST-2 aggregate error analysis
-│   ├── case_studies.md                       # SST-2 qualitative analysis
+│   ├── case_studies_sst2.md                       # SST-2 qualitative analysis
 │   ├── case_studies_candidates.csv           # SST-2 disagreements, ranked
 │   ├── figures_sst2/                              # SST-2 figures (7 PNGs)
 │   │
@@ -281,7 +281,7 @@ Writes `results/case_studies_candidates{,_imdb,_mrpc}.csv` listing all
 disagreements between the two models, ranked by how confidently the
 wrong model held its position. The hand-curated subsets with
 linguistic-phenomenon labels live in
-[`results/case_studies.md`](results/case_studies.md) (SST-2),
+[`results/case_studies_sst2.md`](results/case_studies_sst2.md) (SST-2),
 [`results/case_studies_imdb.md`](results/case_studies_imdb.md) (IMDb), and
 [`results/case_studies_mrpc.md`](results/case_studies_mrpc.md) (MRPC).
 
@@ -301,7 +301,7 @@ linguistic-phenomenon labels live in
 4. **Understated / idiomatic positive** — *almost unsurpassed*, *not the
    least of which*, *shades of gray* all read as negative on the surface.
 
-Per-case discussion: [`results/case_studies.md`](results/case_studies.md).
+Per-case discussion: [`results/case_studies_sst2.md`](results/case_studies_sst2.md).
 
 ### IMDb (long, multi-paragraph) — 1,190 disagreements, 4 themes
 
