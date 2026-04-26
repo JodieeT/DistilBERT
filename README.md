@@ -99,7 +99,7 @@ wins by being more conservative. It refuses to call two sentences a
 paraphrase just because they share lexical material.
 
 Full numbers:
-[`results/error_breakdown.json`](results/error_breakdown.json) (SST-2) ·
+[`results/error_breakdown_sst2.json`](results/error_breakdown_sst2.json) (SST-2) ·
 [`results/error_breakdown_imdb.json`](results/error_breakdown_imdb.json) (IMDb) ·
 [`results/error_breakdown_mrpc.json`](results/error_breakdown_mrpc.json) (MRPC).
 Figures:
@@ -147,7 +147,7 @@ DistilBERT/
 │   ├── predict_bert_sst2.csv                 # SST-2 per-sample BERT predictions
 │   ├── predict_distilbert_sst2.csv           # SST-2 per-sample DistilBERT predictions
 │   ├── merged_predictions_sst2.csv           # joined + 4-category labelled
-│   ├── error_breakdown.json                  # SST-2 aggregate error analysis
+│   ├── error_breakdown_sst2.json                  # SST-2 aggregate error analysis
 │   ├── case_studies.md                       # SST-2 qualitative analysis
 │   ├── case_studies_candidates.csv           # SST-2 disagreements, ranked
 │   ├── figures/                              # SST-2 figures (7 PNGs)
@@ -244,7 +244,7 @@ of four categories (`both_correct`, `both_wrong`, `bert_only_correct`,
 buckets, negation splits, and confidence stats. Outputs:
 
 - `results/merged_predictions_{dataset}.csv`
-- `results/error_breakdown.json` (SST-2) /
+- `results/error_breakdown_sst2.json` (SST-2) /
   `results/error_breakdown_imdb.json` /
   `results/error_breakdown_mrpc.json`
 
