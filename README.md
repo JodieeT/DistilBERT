@@ -141,7 +141,6 @@ DistilBERT/
 │   ├── README.md
 │   │
 │   ├── train_bert_sst2.json                  # SST-2 BERT training metrics
-│   ├── train_bert_sst2_history.json
 │   ├── distilbert_sst2_config.json           # SST-2 DistilBERT training metrics
 │   ├── distilbert_sst2_results.txt
 │   ├── predict_bert_sst2.csv                 # SST-2 per-sample BERT predictions
