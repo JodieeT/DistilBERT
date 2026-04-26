@@ -84,11 +84,15 @@ The three datasets stress the student in different ways:
 | Dominant failure mode | local compositionality (negation, sarcasm, idiom) | long-document integration (buried verdicts, mixed sentiment) | BERT over-predicts paraphrase on high-overlap-but-different pairs |
 | Agreement rate | 95.3% | 95.2% | **86.3%** |
 
+
 #### Performance Drivers: Length and Negation
-<p align="center">
-  <img src="results/figures_sst2/fig3_length_buckets.png" width="45%" />
-  <img src="results/figures_sst2/fig4_negation_split.png" width="45%" />
-</p>
+[cite_start]We analyzed how text length and the presence of negation/contrast markers influence the performance gap across all three benchmarks to characterize specific failure modes[cite: 142].
+
+| Dataset | Accuracy vs. Text Length | Impact of Negation |
+| :--- | :---: | :---: |
+| **SST-2** | <img src="results/figures_sst2/fig3_length_buckets.png" width="100%" /> | <img src="results/figures/fig4_negation_split.png" width="100%" /> |
+| **IMDb** | <img src="results/figures_imdb/fig3_length_buckets.png" width="100%" /> | <img src="results/figures_imdb/fig4_negation_split.png" width="100%" /> |
+| **MRPC** | <img src="results/figures_mrpc/fig3_length_buckets.png" width="100%" /> | <img src="results/figures_mrpc/fig4_negation_split.png" width="100%" /> |
 
 The unifying observation: **DistilBERT loses where sentiment is encoded
 compositionally**, i.e. through negation/sarcasm in short text (SST-2)
