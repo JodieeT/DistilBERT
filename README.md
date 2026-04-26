@@ -337,6 +337,56 @@ task-dependent.
 
 ---
 
+## Limitations
+
+While our experiments provide useful insights into the trade-offs between BERT and DistilBERT, several limitations should be noted.
+
+**1. Use of validation sets for both model selection and analysis**  
+We use the validation sets for both model selection (via checkpoint selection) and downstream analysis. This may introduce mild bias, as the models are indirectly optimized on the same data used for evaluation. A strictly held-out test set would be required for an unbiased estimate of generalization performance.
+
+**2. Limited dataset size, especially for MRPC**  
+Some datasets used in this study are relatively small (e.g., MRPC with 3,668 training samples and 408 validation samples). This can lead to high variance in results and may partially explain why DistilBERT outperforms BERT in this setting. The findings may not generalize to larger or more diverse datasets.
+
+**3. Limited hyperparameter exploration**  
+We use standard fine-tuning settings (e.g., fixed learning rate, batch size, and number of epochs) without extensive hyperparameter tuning. It is possible that further optimization could reduce the observed performance gap between models or change some of the conclusions.
+
+**4. Task and domain scope**  
+Our experiments focus on three GLUE-style tasks (SST-2, IMDb, MRPC), which, while diverse, do not cover all NLP scenarios. In particular, we do not evaluate tasks requiring structured reasoning, multi-hop inference, or domain-specific knowledge, where the performance gap between models may differ.
+
+**5. Approximate latency measurements**  
+Inference latency is estimated from evaluation throughput on a single GPU (T4). These measurements are influenced by batch size, hardware configuration, and framework overhead, and may not fully reflect real-world deployment settings.
+
+**6. Qualitative analysis is based on sampled examples**  
+Our error analysis relies on manually inspecting a subset of misclassified examples. While this allows us to identify recurring patterns (e.g., negation, contrast, sarcasm), the conclusions are qualitative and may not capture all possible failure modes.
+
+**7. Lack of calibration and uncertainty evaluation**  
+Although we analyze prediction confidence, we do not perform formal calibration analysis (e.g., Expected Calibration Error). As a result, conclusions about model reliability based on confidence should be interpreted cautiously.
+
+---
+
+## Future Work
+
+Building on our error analysis, several avenues for future research could further clarify the teacher-student relationship in distillation:
+
+### 1. Robustness-Aware Distillation
+Our findings show that DistilBERT struggles significantly with **compositional logic** (negation and sarcasm). Future work could explore augmenting the distillation loss function with:
+* **Contrastive Loss:** Training on pairs of sentences where a single word (e.g., "not") flips the sentiment, forcing the student to attend to functional tokens.
+* **Saliency Matching:** Forcing the student to mirror the teacher's attention maps specifically on negation keywords.
+
+### 2. Generalization to "In-the-Wild" Data
+While DistilBERT performed well on the curated IMDb and SST-2 datasets, its failure on **long-document integration** suggests it might struggle with real-world noise. Testing these models on "out-of-distribution" data—such as social media posts with non-standard grammar or professional technical reviews—would reveal if the performance gap widens in less "clean" environments.
+
+### 3. Influence of Training Set Scale (The MRPC Paradox)
+We observed that DistilBERT outperformed BERT on the small MRPC dataset. A systematic study could be conducted by **sub-sampling** larger datasets (like IMDb) to various sizes ($n = 500, 1000, 5000$) to find the "cross-over point" where a larger model's capacity transitions from a liability (overfitting) to an asset.
+
+### 4. Beyond Prediction: Distilling Uncertainty
+Our analysis showed that both models are often "confidently wrong." Future experiments could implement **Temperature Scaling** or **Label Smoothing** during the distillation process to see if the student can be trained to produce better-calibrated probability scores, making it safer for deployment in sensitive applications.
+
+### 5. Alternative Architectures
+Investigating whether other compressed models, such as **TinyBERT** (which uses hidden-state matching) or **MobileBERT**, suffer from the same compositional failures as DistilBERT would help determine if these weaknesses are inherent to "shallow" models or specific to the DistilBERT distillation method.
+
+---
+
 ## References
 
 - Devlin, J. *et al.* (2019). *BERT: Pre-training of deep bidirectional
