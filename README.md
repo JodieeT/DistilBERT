@@ -23,6 +23,7 @@ it wins**.
     * [SST-2 Analysis](#sst-2-short-single-sentence--41-disagreements-4-themes)
     * [IMDb Analysis](#imdb-long-multi-paragraph--1190-disagreements-4-themes)
     * [MRPC Analysis](#mrpc-sentence-pair-paraphrase--56-disagreements-student-wins)
+* [Discussion](#discussion)
 * [Limitations](#limitations)
 * [Future Work](#future-work)
 * [Conclusion](#conclusion)
@@ -342,26 +343,27 @@ surface material are paraphrases*. Recurring patterns:
 
 Per-case discussion: [`results/case_studies_mrpc.md`](results/case_studies_mrpc.md).
 
-### Cross-dataset
+---
 
+## Discussion
+
+Our analysis suggests that the performance gap between BERT and DistilBERT is systematic, driven by specific linguistic and structural challenges.
+
+### 1. The Challenge of Compositionality
+DistilBERT struggles with **compositional sentiment**. On SST-2, errors frequently stem from negation and contrastive structures. In these instances, sentiment is not determined by individual tokens but by their structural combination. DistilBERT tends to rely on surface lexical cues, often failing to correctly interpret the **logical scope** of functional tokens like "not" or "but."
+
+### 2. Long-Context Reasoning in IMDb
+On IMDb, the dominant issue is **long-document integration**. Reviews often feature mixed sentiment or delayed verdicts. DistilBERT appears to "average" representations across the document, leading it to overweight frequent sentiment cues (like plot descriptions) while missing the decisive judgment buried at the end. This explains why the gap increases significantly as review length grows.
+
+### 3. Calibration and Overconfidence
 <p align="center">
   <img src="results/figures/fig7_confidence_calibration.png" width="350" alt="Confidence Calibration">
 </p>
 
-DistilBERT is fine on short, sentiment-rich text where bag-of-tokens cues
-align with the label, and breaks where sentiment is encoded
-*compositionally*: through negation, contrastive structure, sarcasm, or
-idiom (SST-2), or through the position of the verdict inside a long
-mixed-sentiment document (IMDb). The student's mean confidence on its
-mistakes is essentially as high as on its successes (0.87–0.89 on the
-sentiment tasks), so simple rejection-by-confidence is not a useful
-safety net.
+DistilBERT exhibits notable **overconfidence in its errors**. Even when predictions are incorrect, its confidence remains high (averaging 0.87–0.89), indicating poor calibration. The student model has not only lost accuracy but also the ability to signal its own uncertainty, making confidence-based rejection an unreliable safety net.
 
-On MRPC the picture inverts. With only 3,668 training pairs, the larger
-model's extra capacity becomes a liability: BERT over-predicts paraphrase
-based on shared surface material, and DistilBERT's stricter
-discrimination wins. The cost of distillation, in other words, is
-task-dependent.
+### 4. Non-Uniform Degradation (The MRPC Paradox)
+The student is not strictly worse in all cases. On MRPC, the larger model’s extra capacity becomes a liability, leading to over-confidence in "lexical overlap" (assuming two sentences are paraphrases just because they share words). DistilBERT’s more "conservative" decision boundary allows it to win by refusing to call these pairs paraphrases, suggesting that **distillation acts as a form of regularization** in low-data settings.
 
 ---
 
