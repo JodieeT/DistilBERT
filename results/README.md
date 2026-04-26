@@ -15,7 +15,6 @@ methodology and headline numbers; this document is a file index.
 
 **Training metrics**
 - [`train_bert_sst2.json`](train_bert_sst2.json) — BERT-base training run
-- [`train_bert_sst2_history.json`](train_bert_sst2_history.json) — per-epoch BERT history
 - [`distilbert_sst2_config.json`](distilbert_sst2_config.json) — DistilBERT config + final eval
 - [`distilbert_sst2_results.txt`](distilbert_sst2_results.txt) — DistilBERT summary (parsed for inference latency)
 
