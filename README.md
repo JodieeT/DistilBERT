@@ -358,9 +358,13 @@ DistilBERT struggles with **compositional sentiment**. On SST-2, errors frequent
 On IMDb, the dominant issue is **long-document integration**. Reviews often feature mixed sentiment or delayed verdicts. DistilBERT appears to "average" representations across the document, leading it to overweight frequent sentiment cues (like plot descriptions) while missing the decisive judgment buried at the end. This explains why the gap increases significantly as review length grows.
 
 ### 3. Calibration and Overconfidence
-<p align="center">
-  <img src="results/figures_sst2/fig7_confidence_calibration.png" width="350" alt="Confidence Calibration">
-</p>
+We evaluated model calibration to determine if prediction confidence aligns with actual accuracy. Across all tasks, DistilBERT is "confidently wrong," maintaining high confidence even on incorrect predictions.
+
+| SST-2 | IMDb | MRPC |
+| :---: | :---: | :---: |
+| <img src="results/figures_sst2/fig7_confidence_calibration.png" width="100%" /> | <img src="results/figures_imdb/fig7_confidence_calibration.png" width="100%" /> | <img src="results/figures_mrpc/fig7_confidence_calibration.png" width="100%" /> |
+
+<p align="center"><i>Figure: Reliability diagrams showing mean confidence on correct vs. wrong predictions.</i></p>
 
 DistilBERT exhibits notable **overconfidence in its errors**. Even when predictions are incorrect, its confidence remains high (averaging 0.87–0.89), indicating poor calibration. The student model has not only lost accuracy but also the ability to signal its own uncertainty, making confidence-based rejection an unreliable safety net.
 
