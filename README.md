@@ -15,6 +15,9 @@ it wins**.
 ## Headline results
 
 ### Aggregate metrics
+![Overall Metrics](results/figures/fig1_overall_metrics.png)
+
+### Aggregate metrics
 
 |  | SST-2 (n = 872 val) |  | IMDb (n = 25,000 test) |  | MRPC (n = 408 val) |  |
 |---|---:|---:|---:|---:|---:|---:|
@@ -65,6 +68,12 @@ The three datasets stress the student in different ways:
 | Negation effect | gap doubles on negated sentences (4.3 pp vs 2.0 pp) | 97% of reviews contain a negation; flag is uninformative | gap similar with/without negation (−2.0 pp vs −1.2 pp; both favour DistilBERT) |
 | Dominant failure mode | local compositionality (negation, sarcasm, idiom) | long-document integration (buried verdicts, mixed sentiment) | BERT over-predicts paraphrase on high-overlap-but-different pairs |
 | Agreement rate | 95.3% | 95.2% | **86.3%** |
+
+#### Performance Drivers: Length and Negation
+<p align="center">
+  <img src="results/figures/fig3_length_buckets.png" width="45%" />
+  <img src="results/figures/fig4_negation_split.png" width="45%" />
+</p>
 
 The unifying observation: **DistilBERT loses where sentiment is encoded
 compositionally**, i.e. through negation/sarcasm in short text (SST-2)
@@ -320,6 +329,8 @@ Per-case discussion: [`results/case_studies_mrpc.md`](results/case_studies_mrpc.
 
 ### Cross-dataset
 
+![Confidence Calibration](results/figures/fig7_confidence_calibration.png)
+
 DistilBERT is fine on short, sentiment-rich text where bag-of-tokens cues
 align with the label, and breaks where sentiment is encoded
 *compositionally*: through negation, contrastive structure, sarcasm, or
@@ -384,6 +395,16 @@ Our analysis showed that both models are often "confidently wrong." Future exper
 
 ### 5. Alternative Architectures
 Investigating whether other compressed models, such as **TinyBERT** (which uses hidden-state matching) or **MobileBERT**, suffer from the same compositional failures as DistilBERT would help determine if these weaknesses are inherent to "shallow" models or specific to the DistilBERT distillation method.
+
+---
+
+## Conclusion
+
+This project reproduces and extends the main finding of the DistilBERT paper: a distilled model can retain much of BERT’s performance while using substantially fewer parameters and less training time. Across SST-2, IMDb, and MRPC, DistilBERT achieves strong accuracy with only about 61% of BERT’s parameter count.
+
+However, the performance trade-off is task-dependent. On SST-2 and IMDb, DistilBERT underperforms BERT, especially on examples involving negation, contrastive structure, sarcasm, or long-document sentiment integration. On MRPC, DistilBERT slightly outperforms BERT, suggesting that smaller models may sometimes generalize better in low-data settings.
+
+Overall, our results show that distillation is not simply a uniform compression-performance trade-off. Instead, the cost of compression depends on task structure, dataset size, and the linguistic complexity of the input.
 
 ---
 
