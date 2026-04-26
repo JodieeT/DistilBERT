@@ -33,7 +33,6 @@ it wins**.
 ## Headline results
 
 ### Aggregate metrics
-![Overall Metrics](results/figures/fig1_overall_metrics.png)
 
 |  | SST-2 (n = 872 val) |  | IMDb (n = 25,000 test) |  | MRPC (n = 408 val) |  |
 |---|---:|---:|---:|---:|---:|---:|
