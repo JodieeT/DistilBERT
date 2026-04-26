@@ -90,7 +90,7 @@ The three datasets stress the student in different ways:
 
 | Dataset | Accuracy vs. Text Length | Impact of Negation |
 | :--- | :---: | :---: |
-| **SST-2** | <img src="results/figures_sst2/fig3_length_buckets.png" width="100%" /> | <img src="results/figures/fig4_negation_split.png" width="100%" /> |
+| **SST-2** | <img src="results/figures_sst2/fig3_length_buckets.png" width="100%" /> | <img src="results/figures_sst2/fig4_negation_split.png" width="100%" /> |
 | **IMDb** | <img src="results/figures_imdb/fig3_length_buckets.png" width="100%" /> | <img src="results/figures_imdb/fig4_negation_split.png" width="100%" /> |
 | **MRPC** | <img src="results/figures_mrpc/fig3_length_buckets.png" width="100%" /> | <img src="results/figures_mrpc/fig4_negation_split.png" width="100%" /> |
 
