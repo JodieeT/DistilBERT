@@ -5,14 +5,12 @@ Reads:
     results/merged_predictions_{dataset}.csv
 
 Writes:
-    SST-2:  results/case_studies_candidates.csv
-    IMDb:   results/case_studies_candidates_imdb.csv
-    MRPC:   results/case_studies_candidates_mrpc.csv
+    results/case_studies_candidates_{dataset}.csv
 
 The script does NOT pick the "best" cases automatically. It outputs every
 sample where the two models disagree, ranked by how confidently the wrong
 model held its position. Use this CSV as raw material for the hand-written
-analysis in `results/case_studies[_imdb].md`.
+analysis in `results/case_studies_{dataset}.md`.
 
 Run from the repo root:
     python code/extract_cases.py                     # SST-2 (default)
@@ -46,8 +44,6 @@ def has_contrastive(text):
 
 
 def output_path(dataset):
-    if dataset == "sst2":
-        return RESULTS / "case_studies_candidates.csv"
     return RESULTS / f"case_studies_candidates_{dataset}.csv"
 
 

@@ -3,14 +3,13 @@ Generate figures for the BERT vs DistilBERT error analysis.
 
 Reads (depending on --dataset):
     results/merged_predictions_{dataset}.csv     (output of error_analysis.py)
-    results/error_breakdown[_imdb].json          (output of error_analysis.py)
+    results/error_breakdown_{dataset}.json       (output of error_analysis.py)
     results/train_bert_{dataset}.json            (output of train_bert.py)
     results/distilbert_{dataset}_config.json     (output of train_distilbert.py)
     results/distilbert_{dataset}_results.txt     (output of train_distilbert.py)
 
 Writes:
-    SST-2:  results/figures/figN_*.png
-    IMDb:   results/figures_imdb/figN_*.png
+    results/figures_{dataset}/figN_*.png
 
 Run from the repo root:
     python code/make_figures.py                    # SST-2 (default)
@@ -72,19 +71,13 @@ def load_eval_samples_per_second_from_txt(txt_path):
 
 
 def paths_for(dataset):
-    if dataset == "sst2":
-        breakdown_path = RESULTS / "error_breakdown.json"
-        fig_dir = RESULTS / "figures"
-    else:
-        breakdown_path = RESULTS / f"error_breakdown_{dataset}.json"
-        fig_dir = RESULTS / f"figures_{dataset}"
     return {
         "merged_csv": RESULTS / f"merged_predictions_{dataset}.csv",
-        "breakdown": breakdown_path,
+        "breakdown": RESULTS / f"error_breakdown_{dataset}.json",
         "bert_meta": RESULTS / f"train_bert_{dataset}.json",
         "distil_meta": RESULTS / f"distilbert_{dataset}_config.json",
         "distil_txt": RESULTS / f"distilbert_{dataset}_results.txt",
-        "fig_dir": fig_dir,
+        "fig_dir": RESULTS / f"figures_{dataset}",
     }
 
 

@@ -7,9 +7,7 @@ Reads:
 
 Writes:
     results/merged_predictions_{dataset}.csv  per-sample merged table with category column
-    results/error_breakdown{suffix}.json      aggregate stats per category + overall
-        (suffix = ""    for sst2, kept for backwards compat with the existing file)
-        (suffix = "_imdb" for imdb)
+    results/error_breakdown_{dataset}.json    aggregate stats per category + overall
 
 Run from the repo root:
     python code/error_analysis.py                  # SST-2 (default)
@@ -121,10 +119,7 @@ def confidence_stats(df):
 
 def output_paths(results_dir, dataset):
     merged = results_dir / f"merged_predictions_{dataset}.csv"
-    if dataset == "sst2":
-        breakdown = results_dir / "error_breakdown.json"
-    else:
-        breakdown = results_dir / f"error_breakdown_{dataset}.json"
+    breakdown = results_dir / f"error_breakdown_{dataset}.json"
     return merged, breakdown
 
 
