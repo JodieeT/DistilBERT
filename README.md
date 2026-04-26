@@ -86,8 +86,8 @@ The three datasets stress the student in different ways:
 
 #### Performance Drivers: Length and Negation
 <p align="center">
-  <img src="results/figures/fig3_length_buckets.png" width="45%" />
-  <img src="results/figures/fig4_negation_split.png" width="45%" />
+  <img src="results/figures_sst2/fig3_length_buckets.png" width="45%" />
+  <img src="results/figures_sst2/fig4_negation_split.png" width="45%" />
 </p>
 
 The unifying observation: **DistilBERT loses where sentiment is encoded
@@ -103,7 +103,7 @@ Full numbers:
 [`results/error_breakdown_imdb.json`](results/error_breakdown_imdb.json) (IMDb) ·
 [`results/error_breakdown_mrpc.json`](results/error_breakdown_mrpc.json) (MRPC).
 Figures:
-[`results/figures/`](results/figures/) ·
+[`results/figures_sst2/`](results/figures_sst2/) ·
 [`results/figures_imdb/`](results/figures_imdb/) ·
 [`results/figures_mrpc/`](results/figures_mrpc/).
 Hand-annotated qualitative analysis:
@@ -150,7 +150,7 @@ DistilBERT/
 │   ├── error_breakdown_sst2.json                  # SST-2 aggregate error analysis
 │   ├── case_studies.md                       # SST-2 qualitative analysis
 │   ├── case_studies_candidates.csv           # SST-2 disagreements, ranked
-│   ├── figures/                              # SST-2 figures (7 PNGs)
+│   ├── figures_sst2/                              # SST-2 figures (7 PNGs)
 │   │
 │   ├── train_bert_imdb.json                  # IMDb BERT training metrics
 │   ├── distilbert_imdb_config.json           # IMDb DistilBERT training metrics
@@ -256,7 +256,7 @@ python code/make_figures.py --dataset imdb
 python code/make_figures.py --dataset mrpc
 ```
 
-Writes seven figures per dataset, to `results/figures/`,
+Writes seven figures per dataset, to `results/figures_sst2/`,
 `results/figures_imdb/`, and `results/figures_mrpc/` respectively:
 
 | File | What it shows |
@@ -356,7 +356,7 @@ On IMDb, the dominant issue is **long-document integration**. Reviews often feat
 
 ### 3. Calibration and Overconfidence
 <p align="center">
-  <img src="results/figures/fig7_confidence_calibration.png" width="350" alt="Confidence Calibration">
+  <img src="results/figures_sst2/fig7_confidence_calibration.png" width="350" alt="Confidence Calibration">
 </p>
 
 DistilBERT exhibits notable **overconfidence in its errors**. Even when predictions are incorrect, its confidence remains high (averaging 0.87–0.89), indicating poor calibration. The student model has not only lost accuracy but also the ability to signal its own uncertainty, making confidence-based rejection an unreliable safety net.
