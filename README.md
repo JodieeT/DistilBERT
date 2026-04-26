@@ -149,7 +149,7 @@ DistilBERT/
 │   ├── merged_predictions_sst2.csv           # joined + 4-category labelled
 │   ├── error_breakdown_sst2.json                  # SST-2 aggregate error analysis
 │   ├── case_studies_sst2.md                       # SST-2 qualitative analysis
-│   ├── case_studies_candidates.csv           # SST-2 disagreements, ranked
+│   ├── case_studies_candidates_sst2.csv           # SST-2 disagreements, ranked
 │   ├── figures_sst2/                              # SST-2 figures (7 PNGs)
 │   │
 │   ├── train_bert_imdb.json                  # IMDb BERT training metrics
