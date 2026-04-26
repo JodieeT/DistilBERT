@@ -17,8 +17,6 @@ it wins**.
 ### Aggregate metrics
 ![Overall Metrics](results/figures/fig1_overall_metrics.png)
 
-### Aggregate metrics
-
 |  | SST-2 (n = 872 val) |  | IMDb (n = 25,000 test) |  | MRPC (n = 408 val) |  |
 |---|---:|---:|---:|---:|---:|---:|
 |  | **BERT** | **DistilBERT** | **BERT** | **DistilBERT** | **BERT** | **DistilBERT** |
@@ -329,7 +327,9 @@ Per-case discussion: [`results/case_studies_mrpc.md`](results/case_studies_mrpc.
 
 ### Cross-dataset
 
-![Confidence Calibration](results/figures/fig7_confidence_calibration.png)
+<p align="center">
+  <img src="results/figures/fig7_confidence_calibration.png" width="350" alt="Confidence Calibration">
+</p>
 
 DistilBERT is fine on short, sentiment-rich text where bag-of-tokens cues
 align with the label, and breaks where sentiment is encoded
