@@ -25,13 +25,13 @@ methodology and headline numbers; this document is a file index.
 
 **Error analysis**
 - [`merged_predictions_sst2.csv`](merged_predictions_sst2.csv) — joined + 4-category labelled
-- [`error_breakdown.json`](error_breakdown.json) — aggregate stats (length buckets, negation split, confidence)
+- [`error_breakdown_sst2.json`](error_breakdown_sst2.json) — aggregate stats (length buckets, negation split, confidence)
 
-**Figures** — [`figures/`](figures/) (7 PNGs: fig1 overall metrics → fig7 confidence calibration)
+**Figures** — [`figures_sst2/`](figures_sst2/) (7 PNGs: fig1 overall metrics → fig7 confidence calibration)
 
 **Case studies**
-- [`case_studies.md`](case_studies.md) — hand-written analysis (12 cases, 4 themes)
-- [`case_studies_candidates.csv`](case_studies_candidates.csv) — all 41 disagreements, ranked
+- [`case_studies_sst2.md`](case_studies_sst2.md) — hand-written analysis (12 cases, 4 themes)
+- [`case_studies_candidates_sst2.csv`](case_studies_candidates_sst2.csv) — all 41 disagreements, ranked
 
 ---
 
@@ -89,11 +89,10 @@ directories, so the analysis scripts can stay path-simple:
 - `train_bert_{dataset}.json` / `distilbert_{dataset}_config.json` — training metrics
 - `predict_{model}_{dataset}.csv` — per-sample predictions
 - `merged_predictions_{dataset}.csv` — joined BERT + DistilBERT, labelled by 4-category
-- `error_breakdown[_{dataset}].json` — aggregate analysis
-  *(SST-2 keeps the legacy unsuffixed name; IMDb and MRPC use suffixes)*
-- `case_studies[_{dataset}].md` — hand-written qualitative analysis
-- `case_studies_candidates[_{dataset}].csv` — ranked disagreements (input to the markdown)
-- `figures[_{dataset}]/` — seven PNGs per dataset
+- `error_breakdown_{dataset}.json` — aggregate analysis
+- `case_studies_{dataset}.md` — hand-written qualitative analysis
+- `case_studies_candidates_{dataset}.csv` — ranked disagreements (input to the markdown)
+- `figures_{dataset}/` — seven PNGs per dataset
 
 Model checkpoint directories (`{dataset}_bert_base/` and
 `distilbert_{dataset}_model/`) are written by the training scripts but
