@@ -197,15 +197,15 @@ pip install transformers datasets evaluate scikit-learn pandas matplotlib
 ### 2. Fine-tune both models
 
 ```bash
-# SST-2  (~12 min on a T4)
+# SST-2 
 python code/train_bert.py --dataset sst2 --batch_size 32 --epochs 3
 python code/train_distilbert.py
 
-# IMDb  (~26 min on a T4)
+# IMDb
 python code/train_bert_imdb.py
 python code/train_distilbert_imdb.py
 
-# MRPC  (~2 min on a T4)
+# MRPC 
 python code/train_bert_mrpc.py
 python code/train_distilbert_mrpc.py
 ```
