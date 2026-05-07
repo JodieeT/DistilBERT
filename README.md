@@ -13,11 +13,13 @@ it wins**.
 ---
 
 ## Table of Contents
+* [Chosen Result](#chosen-result)
 * [Headline Results](#headline-results)
     * [Aggregate Metrics](#aggregate-metrics)
     * [Comparison to Paper](#comparison-to-the-distilbert-paper)
     * [Where the Gap Lives](#where-the-gap-lives)
 * [Repository Structure](#repository-structure)
+* [Re-implementation Details](#re-implementation-details)
 * [Reproducing the Experiments](#reproducing-the-experiments)
 * [Findings](#findings)
     * [SST-2 Analysis](#sst-2-short-single-sentence--41-disagreements-4-themes)
@@ -27,6 +29,16 @@ it wins**.
 * [Limitations](#limitations)
 * [Future Work](#future-work)
 * [Conclusion](#conclusion)
+* [References](#references)
+* [Acknowledgements](#acknowledgements)
+
+---
+
+## Chosen Result
+
+We reproduce **Table 2 of Sanh et al. (2019)** — the headline claim that DistilBERT is *40% smaller, 60% faster, and retains ~97%* of BERT's GLUE accuracy. This result is the paper's central empirical promise and underwrites the practical case for distillation in deployment.
+
+We chose it because the headline retention is *aggregate*: a single number across heterogeneous tasks tells you nothing about which input distributions break first. We therefore reproduce it on three GLUE-style benchmarks (SST-2, IMDb, MRPC) and read per-sample disagreements between teacher and student to characterise *where* the lost ~3% lives.
 
 ---
 
@@ -179,6 +191,17 @@ DistilBERT/
 │
 └── README.md
 ```
+
+---
+
+## Re-implementation Details
+
+- **Models**: `bert-base-uncased` (12 layers, 110M params) vs. `distilbert-base-uncased` (6 layers, 67M params), via HuggingFace `transformers`. We use the public DistilBERT checkpoint (no redistillation).
+- **Datasets**: SST-2 (67K train / 872 val, single-sentence sentiment), IMDb (25K / 25K, long-document sentiment), MRPC (3.7K / 408, sentence-pair paraphrase identification with pair tokenization `tokenizer(s1, s2)`).
+- **Fine-tuning**: 3 epochs, AdamW, lr 2e-5, weight decay 0.01, batch size 16 (IMDb) / 32 (SST-2/MRPC), max length 128 / 256, on a single Colab T4 GPU.
+- **Evaluation metrics**: accuracy, F1, training wall-clock, parameter count, and inference latency computed as `1 / eval_samples_per_second` from `trainer.evaluate()` — one consistent throughput methodology across all three datasets.
+- **Beyond the paper**: per-sample BERT and DistilBERT predictions joined into a 4-category breakdown (`both_correct` / `both_wrong` / `bert_only_correct` / `distilbert_only_correct`), bucketed by length, flagged for negation/contrast, with confidence calibration and hand-curated qualitative case studies on the disagreements.
+- **Challenges and modifications**: training speed-up capped at ~48% (paper claims 60%) due to input-pipeline and tokenization overhead on T4; MRPC's small validation set (n=408) makes single-run inference latency noisy, so we report it with a caveat. We did not run the original distillation step ourselves — we use the public DistilBERT checkpoint released by Sanh et al.
 
 ---
 
@@ -447,3 +470,14 @@ Overall, our results show that distillation is not simply a uniform compression-
   lighter.* [arXiv:1910.01108](https://arxiv.org/abs/1910.01108)
 - Socher, R. *et al.* (2013). *Recursive deep models for semantic
   compositionality over a sentiment treebank.* (SST-2 dataset)
+- Wolf, T. *et al.* (2020). *Transformers: State-of-the-art natural
+  language processing.* In *Proceedings of EMNLP: System Demonstrations*,
+  pages 38–45. (HuggingFace Transformers library)
+
+---
+
+## Acknowledgements
+
+This project was completed as the final deliverable for **CS 4782 / CS 5782 Deep Learning (Spring 2025) at Cornell University**. We thank the course instructors and teaching staff for their guidance and feedback throughout the semester, and our peer reviewers for comments during the in-class poster presentations.
+
+The DistilBERT teacher–student framework follows Sanh et al. (2019); we used the open-source [HuggingFace Transformers](https://github.com/huggingface/transformers) and [Datasets](https://github.com/huggingface/datasets) libraries, the [GLUE benchmark](https://gluebenchmark.com/) (Wang et al., 2018) for SST-2 and MRPC, and the IMDb sentiment corpus (Maas et al., 2011). All fine-tuning was run on Google Colab T4 GPUs.
