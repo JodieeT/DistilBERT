@@ -189,6 +189,12 @@ DistilBERT/
 │   ├── case_studies_candidates_mrpc.csv      # MRPC disagreements, ranked
 │   └── figures_mrpc/                         # MRPC figures (7 PNGs)
 │
+├── poster/
+│   └── poster.pdf
+├── report/
+│   └── group_topic_2page_report.pdf
+├── LICENSE
+├── .gitignore
 └── README.md
 ```
 
