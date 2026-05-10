@@ -98,7 +98,7 @@ The three datasets stress the student in different ways:
 
 
 #### Performance Drivers: Length and Negation
-[cite_start]We analyzed how text length and the presence of negation/contrast markers influence the performance gap across all three benchmarks to characterize specific failure modes[cite: 142].
+We analyzed how text length and the presence of negation/contrast markers influence the performance gap across all three benchmarks to characterize specific failure modes.
 
 | Dataset | Accuracy vs. Text Length | Impact of Negation |
 | :--- | :---: | :---: |
